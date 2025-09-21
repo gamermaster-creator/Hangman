@@ -12,6 +12,8 @@ const usedLettersDisplay = document.getElementById('used-letters');
 const message = document.getElementById('message');
 const newGameBtn = document.getElementById('new-game');
 const categorySelection = document.getElementById('category-selection');
+const categoryDropdown = document.getElementById('category-dropdown');
+const startGameBtn = document.getElementById('start-game-btn');
 
 // Fetch words from JSON
 async function loadWords() {
@@ -25,16 +27,15 @@ async function loadWords() {
     }
 }
 
-// Setup category selection buttons
+// Setup category selection dropdown
 function setupCategories() {
-    categorySelection.innerHTML = '<h2>เลือกหมวดหมู่</h2>';
+    categoryDropdown.innerHTML = '';
     for (const categoryKey in wordsData) {
         const category = wordsData[categoryKey];
-        const button = document.createElement('button');
-        button.textContent = category.name;
-        button.classList.add('category-btn');
-        button.addEventListener('click', () => startGame(category.words));
-        categorySelection.appendChild(button);
+        const option = document.createElement('option');
+        option.value = categoryKey;
+        option.textContent = category.name;
+        categoryDropdown.appendChild(option);
     }
     showScreen('category');
 }
@@ -54,7 +55,9 @@ function showScreen(screen) {
 }
 
 // Start a new game with words from a category
-function startGame(words) {
+function startGame() {
+    const selectedCategory = categoryDropdown.value;
+    const words = wordsData[selectedCategory].words;
     word = words[Math.floor(Math.random() * words.length)].toUpperCase();
     guessedLetters = [];
     wrongGuesses = 0;
@@ -147,7 +150,7 @@ function drawHangman() {
 // Handle letter guess
 function handleGuess(key) {
     const letter = key.toUpperCase();
-    if (gameState !== 'playing' || !/^[ก-ฮ]$/.test(letter) || guessedLetters.includes(letter)) {
+    if (gameState !== 'playing' || !/^[฀-๿]$/.test(letter) || guessedLetters.includes(letter)) {
         return;
     }
 
@@ -182,6 +185,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 newGameBtn.addEventListener('click', setupCategories);
+startGameBtn.addEventListener('click', startGame);
 
 // Theme toggle functionality
 const themeToggleBtn = document.getElementById('theme-toggle-btn');

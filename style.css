@@ -97,7 +97,16 @@ h1 {
     margin-bottom: 2rem;
 }
 
-.category-btn {
+#category-dropdown {
+    padding: 10px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    border: 1px solid var(--secondary-color);
+    background-color: var(--container-bg);
+    color: var(--text-color);
+}
+
+#start-game-btn {
     padding: 10px 20px;
     font-size: 1.2rem;
     background-color: var(--primary-color);
@@ -108,7 +117,7 @@ h1 {
     transition: background-color 0.3s;
 }
 
-.category-btn:hover {
+#start-game-btn:hover {
     background-color: var(--hover-color);
 }
 
