@@ -5,12 +5,14 @@ const words = [
 
 let word = '';
 let guessedLetters = [];
-let remainingGuesses = 6;
+let wrongGuesses = 0;
+const maxWrongGuesses = 6;
 let gameState = 'playing'; // playing, won, lost
 
 const canvas = document.getElementById('hangman');
 const ctx = canvas.getContext('2d');
 const wordDisplay = document.getElementById('word-display');
+const usedLettersDisplay = document.getElementById('used-letters');
 const message = document.getElementById('message');
 const keyboard = document.getElementById('keyboard');
 const newGameBtn = document.getElementById('new-game');
@@ -19,7 +21,7 @@ const newGameBtn = document.getElementById('new-game');
 function initGame() {
     word = words[Math.floor(Math.random() * words.length)];
     guessedLetters = [];
-    remainingGuesses = 6;
+    wrongGuesses = 0;
     gameState = 'playing';
     
     // Reset keyboard buttons
@@ -32,8 +34,9 @@ function initGame() {
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Reset message
+    // Reset message and used letters
     message.textContent = '';
+    usedLettersDisplay.textContent = '';
     
     // Update display
     updateWordDisplay();
@@ -50,7 +53,12 @@ function updateWordDisplay() {
     });
 }
 
-// Draw hangman based on remaining guesses
+// Update the used letters display
+function updateUsedLetters() {
+    usedLettersDisplay.textContent = guessedLetters.join(', ');
+}
+
+// Draw hangman based on wrong guesses
 function drawHangman() {
     ctx.strokeStyle = '#333';
     ctx.lineWidth = 2;
@@ -107,40 +115,50 @@ function drawHangman() {
     ];
     
     // Draw body parts based on wrong guesses
-    for (let i = 0; i < 6 - remainingGuesses; i++) {
+    for (let i = 0; i < wrongGuesses; i++) {
         parts[i]();
     }
 }
 
 // Handle letter guess
 function handleGuess(letter) {
-    if (gameState !== 'playing') return;
-    
-    if (!guessedLetters.includes(letter)) {
-        guessedLetters.push(letter);
-        
-        const button = document.querySelector(`.keyboard button:contains('${letter}')`);
-        
-        if (word.includes(letter)) {
-            button.classList.add('correct');
-            if (word.split('').every(l => guessedLetters.includes(l))) {
-                gameState = 'won';
-                message.textContent = 'Congratulations! You won! 🎉';
-            }
-        } else {
-            button.classList.add('wrong');
-            remainingGuesses--;
-            drawHangman();
-            
-            if (remainingGuesses === 0) {
-                gameState = 'lost';
-                message.textContent = `Game Over! The word was: ${word}`;
-            }
-        }
-        
-        button.disabled = true;
-        updateWordDisplay();
+    letter = letter.toUpperCase();
+    if (gameState !== 'playing' || !/^[A-Z]$/.test(letter) || guessedLetters.includes(letter)) {
+        return;
     }
+    
+    guessedLetters.push(letter);
+    
+    const button = Array.from(document.querySelectorAll('.keyboard button')).find(btn => btn.textContent === letter);
+    
+    if (word.includes(letter)) {
+        if (button) button.classList.add('correct');
+        if (word.split('').every(l => guessedLetters.includes(l))) {
+            gameState = 'won';
+            message.textContent = 'Congratulations! You won! 🎉';
+            disableAllButtons();
+        }
+    } else {
+        if (button) button.classList.add('wrong');
+        wrongGuesses++;
+        drawHangman();
+        
+        if (wrongGuesses >= maxWrongGuesses) {
+            gameState = 'lost';
+            message.textContent = `Game Over! The word was: ${word}`;
+            disableAllButtons();
+        }
+    }
+    
+    if (button) button.disabled = true;
+    updateWordDisplay();
+    updateUsedLetters();
+}
+
+function disableAllButtons() {
+    document.querySelectorAll('.keyboard button').forEach(button => {
+        button.disabled = true;
+    });
 }
 
 // Event listeners
@@ -150,12 +168,11 @@ keyboard.addEventListener('click', (e) => {
     }
 });
 
-newGameBtn.addEventListener('click', initGame);
+document.addEventListener('keydown', (e) => {
+    handleGuess(e.key);
+});
 
-// Helper function for button selection
-HTMLElement.prototype.contains = function(text) {
-    return this.textContent === text;
-};
+newGameBtn.addEventListener('click', initGame);
 
 // Start the game
 initGame();
