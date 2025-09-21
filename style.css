@@ -172,7 +172,6 @@ h1 {
     position: relative;
     width: 40px; /* Increased width for better vowel placement */
     height: 70px; /* Increased height to accommodate vowels */
-    border-bottom: 3px solid var(--secondary-color);
     display: flex;
     justify-content: center;
     align-items: flex-end; /* Align consonant to the bottom */
@@ -180,6 +179,7 @@ h1 {
 
 .consonant {
     font-size: 30px;
+    border-bottom: 3px solid var(--secondary-color);
 }
 
 .vowel-top, .vowel-bottom {
@@ -187,6 +187,7 @@ h1 {
     font-size: 20px;
     left: 50%;
     transform: translateX(-50%);
+    border-bottom: 3px solid var(--secondary-color);
 }
 
 .vowel-top {
