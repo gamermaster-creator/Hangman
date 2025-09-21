@@ -89,6 +89,29 @@ h1 {
     text-align: center;
 }
 
+#category-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.category-btn {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.category-btn:hover {
+    background-color: var(--hover-color);
+}
+
 .game-container {
     padding: 20px 30px;
     position: relative;
@@ -98,13 +121,17 @@ h1 {
     align-items: center;
 }
 
+.game-box,
+.hangman-box {
+    display: none;
+}
+
 .hangman-box {
     margin-bottom: 1.5rem;
     fill: none;
-    stroke: var(--text-color); /* Change hangman color to black */
-    stroke-inecap: round;
+    stroke: var(--text-color);
+    stroke-linecap: round;
 }
-
 
 .figure-part {
     display: none;
@@ -126,23 +153,21 @@ h1 {
     }
 }
 
-
 #word-display {
     display: flex;
     gap: 10px;
     margin-bottom: 1rem;
 }
 
-#word-display span, .letter {
+#word-display span {
     border-bottom: 3px solid var(--secondary-color);
     display: inline-flex;
-    font-size: 30px; 
+    font-size: 30px;
     justify-content: center;
     margin: 0 5px;
     height: 50px;
     width: 30px;
     text-transform: uppercase;
-    color: #000; /* Ensure letter color is black */
 }
 
 #message {
@@ -150,7 +175,6 @@ h1 {
     text-align: center;
     margin: 1rem 0;
     min-height: 24px;
-    color: #000; /* Ensure message color is black */
 }
 
 #used-letters-container {
@@ -170,51 +194,6 @@ h1 {
     text-align: center;
     font-size: 16px;
     min-height: 30px;
-}
-
-.keyboard {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.keyboard-row {
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-}
-
-.keyboard button, .key {
-    width: 45px;
-    height: 45px;
-    background: var(--button-bg);
-    border: none;
-    border-radiu
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s;
-    color: var(--text-color); /* Ensure keyboard text is black */
-}
-
-.keyboard button:hover, .key:hover {
-    backgr}
-
-.keyboard button:disabled, .key:disabled {
-    background: var(--disabled-color);
-    cursor: not 
-}
-
-[data-theme="dark"] .keyboard button:disab
-}
-
-.keyboard button.correct {
-    background: #4caf50;
-    color: white;
-}
-
-.keyboard button.wrong {
-    background: #f44336;
-    color: white;
 }
 
 footer {

@@ -1,46 +1,72 @@
-const words = [
-    'HANGMAN', 'JAVASCRIPT', 'COMPUTER', 'PROGRAMMING', 'DEVELOPER',
-    'WEBSITE', 'INTERNET', 'APPLICATION', 'KEYBOARD', 'MONITOR'
-];
-
+let wordsData = {};
 let word = '';
 let guessedLetters = [];
 let wrongGuesses = 0;
 const maxWrongGuesses = 6;
-let gameState = 'playing'; // playing, won, lost
+let gameState = 'choosing'; // choosing, playing, won, lost
 
 const canvas = document.getElementById('hangman');
 const ctx = canvas.getContext('2d');
 const wordDisplay = document.getElementById('word-display');
 const usedLettersDisplay = document.getElementById('used-letters');
 const message = document.getElementById('message');
-const keyboard = document.getElementById('keyboard');
 const newGameBtn = document.getElementById('new-game');
+const categorySelection = document.getElementById('category-selection');
 
-// Initialize the game
-function initGame() {
-    word = words[Math.floor(Math.random() * words.length)];
+// Fetch words from JSON
+async function loadWords() {
+    try {
+        const response = await fetch('words.json');
+        wordsData = await response.json();
+        setupCategories();
+    } catch (error) {
+        console.error('Error loading words:', error);
+        message.textContent = 'Failed to load words. Please try again later.';
+    }
+}
+
+// Setup category selection buttons
+function setupCategories() {
+    categorySelection.innerHTML = '<h2>เลือกหมวดหมู่</h2>';
+    for (const categoryKey in wordsData) {
+        const category = wordsData[categoryKey];
+        const button = document.createElement('button');
+        button.textContent = category.name;
+        button.classList.add('category-btn');
+        button.addEventListener('click', () => startGame(category.words));
+        categorySelection.appendChild(button);
+    }
+    showScreen('category');
+}
+
+// Show the correct screen (category selection or game)
+function showScreen(screen) {
+    if (screen === 'category') {
+        categorySelection.style.display = 'flex';
+        document.querySelector('.game-box').style.display = 'none';
+        document.querySelector('.hangman-box').style.display = 'none';
+        message.textContent = '';
+    } else if (screen === 'game') {
+        categorySelection.style.display = 'none';
+        document.querySelector('.game-box').style.display = 'block';
+        document.querySelector('.hangman-box').style.display = 'block';
+    }
+}
+
+// Start a new game with words from a category
+function startGame(words) {
+    word = words[Math.floor(Math.random() * words.length)].toUpperCase();
     guessedLetters = [];
     wrongGuesses = 0;
     gameState = 'playing';
-    
-    // Reset keyboard buttons
-    const buttons = document.querySelectorAll('.keyboard button');
-    buttons.forEach(button => {
-        button.disabled = false;
-        button.classList.remove('correct', 'wrong');
-    });
-    
-    // Clear canvas
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Reset message and used letters
     message.textContent = '';
     usedLettersDisplay.textContent = '';
-    
-    // Update display
+
     updateWordDisplay();
     drawHangman();
+    showScreen('game');
 }
 
 // Update the word display with guessed letters
@@ -62,10 +88,9 @@ function updateUsedLetters() {
 function drawHangman() {
     ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
     ctx.lineWidth = 2;
-    
-    // Clear canvas
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     // Draw gallows
     ctx.beginPath();
     ctx.moveTo(50, 250);
@@ -75,7 +100,7 @@ function drawHangman() {
     ctx.lineTo(200, 50);
     ctx.lineTo(200, 80);
     ctx.stroke();
-    
+
     const parts = [
         () => { // Head
             ctx.beginPath();
@@ -113,89 +138,65 @@ function drawHangman() {
             ctx.stroke();
         }
     ];
-    
-    // Draw body parts based on wrong guesses
+
     for (let i = 0; i < wrongGuesses; i++) {
         parts[i]();
     }
 }
 
 // Handle letter guess
-function handleGuess(letter) {
-    letter = letter.toUpperCase();
-    if (gameState !== 'playing' || !/^[A-Z]$/.test(letter) || guessedLetters.includes(letter)) {
+function handleGuess(key) {
+    const letter = key.toUpperCase();
+    if (gameState !== 'playing' || !/^[ก-ฮ]$/.test(letter) || guessedLetters.includes(letter)) {
         return;
     }
-    
+
     guessedLetters.push(letter);
-    
-    const button = Array.from(document.querySelectorAll('.keyboard button')).find(btn => btn.textContent === letter);
-    
+
     if (word.includes(letter)) {
-        if (button) button.classList.add('correct');
         if (word.split('').every(l => guessedLetters.includes(l))) {
             gameState = 'won';
-            message.textContent = 'Congratulations! You won! 🎉';
-            disableAllButtons();
+            message.textContent = 'ยินดีด้วย! คุณชนะ! 🎉';
         }
     } else {
-        if (button) button.classList.add('wrong');
         wrongGuesses++;
-
-        // Add shake animation to canvas
         canvas.classList.add('shake');
         setTimeout(() => {
             canvas.classList.remove('shake');
         }, 500);
-
         drawHangman();
-        
+
         if (wrongGuesses >= maxWrongGuesses) {
             gameState = 'lost';
-            message.textContent = `Game Over! The word was: ${word}`;
-            disableAllButtons();
+            message.textContent = `เกมจบ! คำที่ถูกต้องคือ: ${word}`;
         }
     }
-    
-    if (button) button.disabled = true;
+
     updateWordDisplay();
     updateUsedLetters();
 }
 
-function disableAllButtons() {
-    document.querySelectorAll('.keyboard button').forEach(button => {
-        button.disabled = true;
-    });
-}
-
 // Event listeners
-keyboard.addEventListener('click', (e) => {
-    if (e.target.tagName === 'BUTTON') {
-        handleGuess(e.target.textContent);
-    }
-});
-
 document.addEventListener('keydown', (e) => {
     handleGuess(e.key);
 });
 
-newGameBtn.addEventListener('click', initGame);
+newGameBtn.addEventListener('click', setupCategories);
+
 // Theme toggle functionality
 const themeToggleBtn = document.getElementById('theme-toggle-btn');
 const themeIcon = document.getElementById('theme-icon');
 
-// Check for saved theme preference, otherwise use device preference
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 const savedTheme = localStorage.getItem('theme') || (prefersDark ? 'dark' : 'light');
 
-// Apply the saved theme
 document.documentElement.setAttribute('data-theme', savedTheme);
 updateThemeIcon(savedTheme);
 
 themeToggleBtn.addEventListener('click', () => {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    
+
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
     updateThemeIcon(newTheme);
@@ -206,5 +207,5 @@ function updateThemeIcon(theme) {
     themeIcon.textContent = theme === 'dark' ? 'dark_mode' : 'light_mode';
 }
 
-// Start the game
-initGame();
+// Initialize the app
+loadWords();
