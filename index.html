@@ -1,34 +1,38 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>เกมทายคำภาษาไทย</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>เกมทายคำภาษาไทย (Hangman)</h1>
-    <div class="game-container">
-        <svg height="250" width="200" class="hangman-box">
-            <line x1="60" y1="20" x2="140" y2="20" />
-            <line x1="140" y1="20" x2="140" y2="50" />
-            <line x1="60" y1="20" x2="60" y2="230" />
-            <line x1="20" y1="230" x2="100" y2="230" />
-
-            <circle cx="140" cy="70" r="20" class="figure-part" /> <line x1="140" y1="90" x2="140" y2="150" class="figure-part" /> <line x1="140" y1="120" x2="120" y2="100" class="figure-part" /> <line x1="140" y1="120" x2="160" y2="100" class="figure-part" /> <line x1="140" y1="150" x2="120" y2="180" class="figure-part" /> <line x1="140" y1="150" x2="160" y2="180" class="figure-part" /> </svg>
-
-        <div id="word-display" class="word-display">
-            </div>
-
-        <div id="keyboard" class="keyboard"></div>
-        
-        <div id="notification" class="notification-container">
-            <div class="notification">
-                <p id="notification-text"></p>
-                <button id="play-again">เล่นอีกครั้ง</button>
-            </div>
+    <div class="container">
+        <h1>Hangman Game</h1>
+        <div class="hangman-box">
+            <canvas id="hangman" width="300" height="300"></canvas>
         </div>
-
-        <div id="used-letters" class="used-letters"></div>
+        <div class="game-box">
+            <div id="word-display"></div>
+            <div id="message"></div>
+            <div id="keyboard" class="keyboard">
+                <div class="keyboard-row">
+                    <button>Q</button><button>W</button><button>E</button><button>R</button>
+                    <button>T</button><button>Y</button><button>U</button><button>I</button>
+                    <button>O</button><button>P</button>
+                </div>
+                <div class="keyboard-row">
+                    <button>A</button><button>S</button><button>D</button><button>F</button>
+                    <button>G</button><button>H</button><button>J</button><button>K</button>
+                    <button>L</button>
+                </div>
+                <div class="keyboard-row">
+                    <button>Z</button><button>X</button><button>C</button><button>V</button>
+                    <button>B</button><button>N</button><button>M</button>
+                </div>
+            </div>
+            <button id="new-game" class="new-game-btn">New Game</button>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
