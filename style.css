@@ -172,7 +172,6 @@ h1 {
     position: relative;
     width: 40px;
     height: 70px;
-    border-bottom: 3px solid var(--secondary-color);
 }
 
 .consonant, .vowel-top, .vowel-bottom {
@@ -220,26 +219,6 @@ h1 {
     text-align: center;
     font-size: 16px;
     min-height: 30px;
-}
-
-#mobile-input {
-    display: none; /* Hidden by default */
-    width: 100px;
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid var(--secondary-color);
-}
-
-#guess-btn {
-    display: none; /* Hidden by default */
-    padding: 10px 15px;
-    font-size: 1rem;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
 }
 
 footer {
@@ -337,9 +316,5 @@ footer p {
 
     #used-letters-container {
         font-size: 1rem;
-    }
-
-    #mobile-input, #guess-btn {
-        display: inline-block;
     }
 }

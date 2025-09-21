@@ -14,15 +14,6 @@ const newGameBtn = document.getElementById('new-game');
 const categorySelection = document.getElementById('category-selection');
 const categoryDropdown = document.getElementById('category-dropdown');
 const startGameBtn = document.getElementById('start-game-btn');
-const mobileInput = document.getElementById('mobile-input');
-const guessBtn = document.createElement('button');
-guessBtn.textContent = 'Guess';
-guessBtn.id = 'guess-btn';
-
-// Check if the device is mobile
-function isMobile() {
-    return window.innerWidth <= 768;
-}
 
 // Fetch words from JSON
 async function loadWords() {
@@ -79,12 +70,7 @@ function startGame() {
     updateWordDisplay();
     drawHangman();
     showScreen('game');
-
-    if (isMobile()) {
-        mobileInput.style.display = 'inline-block';
-        mobileInput.parentElement.appendChild(guessBtn);
-        mobileInput.focus();
-    }
+    window.focus();
 }
 
 // Decompose Thai characters into consonant and vowels
@@ -137,13 +123,24 @@ function updateWordDisplay() {
         const bottomSpan = document.createElement('span');
         bottomSpan.classList.add('vowel-bottom');
 
+        const { top, consonant, bottom } = decomposeThai(char);
+
         if (guessedLetters.includes(char)) {
-            const { top, consonant, bottom } = decomposeThai(char);
             topSpan.textContent = top;
             consonantSpan.textContent = consonant;
             bottomSpan.textContent = bottom;
         } else {
-            consonantSpan.innerHTML = '&nbsp;'; // Keep the space for the underline
+            if (top) {
+                topSpan.innerHTML = '_';
+            }
+            if (bottom) {
+                bottomSpan.innerHTML = '_';
+            }
+            if (!top && !bottom) {
+                consonantSpan.innerHTML = '_';
+            } else {
+                consonantSpan.innerHTML = '&nbsp;';
+            }
         }
 
         letterContainer.appendChild(topSpan);
@@ -260,13 +257,6 @@ function handleGuess(key) {
 // Event listeners
 document.addEventListener('keydown', (e) => {
     handleGuess(e.key);
-});
-
-guessBtn.addEventListener('click', () => {
-    const letter = mobileInput.value;
-    handleGuess(letter);
-    mobileInput.value = '';
-    mobileInput.focus();
 });
 
 newGameBtn.addEventListener('click', setupCategories);
