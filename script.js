@@ -89,17 +89,31 @@ function startGame() {
 
 // Decompose Thai characters into consonant and vowels
 function decomposeThai(letter) {
-    const topVowels = ['ั', 'ิ', 'ี', 'ึ', 'ื', '็', '่', '้', '๊', '๋', '์', 'ํ', '๎'];
-    const bottomVowels = ['ุ', 'ู', 'ฺ'];
+    const topChars = [
+        '\u0E31', // ั
+        '\u0E34', // ิ
+        '\u0E35', // ี
+        '\u0E36', // ึ
+        '\u0E37', // ื
+        '\u0E47', // ็
+        '\u0E48', // ่
+        '\u0E49', // ้
+        '\u0E4A', // ๊
+        '\u0E4B', // ๋
+        '\u0E4C', // ์
+        '\u0E4D', // ํ
+        '\u0E4E', // ๎
+    ];
+    const bottomChars = ['\u0E38', '\u0E39', '\u0E3A']; // ุ, ู, ฺ
 
     let consonant = '';
     let top = '';
     let bottom = '';
 
     for (const char of letter) {
-        if (topVowels.includes(char)) {
+        if (topChars.includes(char)) {
             top += char;
-        } else if (bottomVowels.includes(char)) {
+        } else if (bottomChars.includes(char)) {
             bottom += char;
         } else {
             consonant += char;
@@ -213,8 +227,8 @@ function handleGuess(key) {
     }
 
     // Check if any character in the key is a valid Thai character
-    const isValidThai = [...normalizedKey].some(char => /^[฀-๿]$/.test(char));
-    if (!isValidThai) {
+    const thaiRegex = /^[\u0E00-\u0E7F]+$/;
+    if (!thaiRegex.test(normalizedKey)) {
         return;
     }
 
