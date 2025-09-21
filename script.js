@@ -137,20 +137,13 @@ function updateWordDisplay() {
         const bottomSpan = document.createElement('span');
         bottomSpan.classList.add('vowel-bottom');
 
-        const { top, consonant, bottom } = decomposeThai(char);
-
         if (guessedLetters.includes(char)) {
+            const { top, consonant, bottom } = decomposeThai(char);
             topSpan.textContent = top;
             consonantSpan.textContent = consonant;
             bottomSpan.textContent = bottom;
         } else {
-            if (top) {
-                topSpan.innerHTML = '&nbsp;_';
-            }
-            if (bottom) {
-                bottomSpan.innerHTML = '&nbsp;_';
-            }
-            consonantSpan.innerHTML = '&nbsp;_';
+            consonantSpan.innerHTML = '&nbsp;'; // Keep the space for the underline
         }
 
         letterContainer.appendChild(topSpan);

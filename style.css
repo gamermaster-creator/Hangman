@@ -170,32 +170,30 @@ h1 {
 
 .letter-container {
     position: relative;
-    width: 40px; /* Increased width for better vowel placement */
-    height: 70px; /* Increased height to accommodate vowels */
-    display: flex;
-    justify-content: center;
-    align-items: flex-end; /* Align consonant to the bottom */
+    width: 40px;
+    height: 70px;
+    border-bottom: 3px solid var(--secondary-color);
+}
+
+.consonant, .vowel-top, .vowel-bottom {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .consonant {
     font-size: 30px;
-    border-bottom: 3px solid var(--secondary-color);
-}
-
-.vowel-top, .vowel-bottom {
-    position: absolute;
-    font-size: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-bottom: 3px solid var(--secondary-color);
+    bottom: 5px;
 }
 
 .vowel-top {
+    font-size: 20px;
     top: 0;
 }
 
 .vowel-bottom {
-    bottom: -25px; /* Adjust position to be below the underline */
+    font-size: 20px;
+    bottom: -25px;
 }
 
 #message {
