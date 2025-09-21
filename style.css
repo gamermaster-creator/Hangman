@@ -155,18 +155,6 @@ h1 {
     min-height: 30px;
 }
 
-#used-letters-container {
-    font-size: 1.1rem;
-    text-align: center;
-    margin-top: 1rem;
-    color: #555;
-}
-
-#used-letters {
-    font-weight: bold;
-    color: #333;
-}
-
 .keyboard {
     display: flex;
     flex-direction: column;
@@ -266,19 +254,5 @@ footer p {
     border-radius: 5px;
     padding: 20px;
     text-align: center;
-<<<<<<< HEAD
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
-=======
-}
-
-.used-letters {
-    margin-top: 20px;
-    padding: 10px;
-    border-radius: 8px;
-    background: #f0f0f0;
-    text-align: center;
-    font-size: 16px;
-    min-height: 30px;
-}
->>>>>>> d2cbb9fc96082a98524347c0dbed1d1fbde27ded
