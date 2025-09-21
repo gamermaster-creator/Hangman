@@ -96,7 +96,10 @@ function decomposeThai(letter) {
     let top = '';
     let bottom = '';
 
-    for (const char of letter) {
+    // Using normalize to decompose combined characters
+    const decomposed = letter.normalize('NFD');
+
+    for (const char of decomposed) {
         if (topChars.includes(char)) {
             top += char;
         } else if (bottomChars.includes(char)) {
@@ -131,10 +134,10 @@ function updateWordDisplay() {
             bottomSpan.textContent = bottom;
         } else {
             if (top) {
-                topSpan.innerHTML = '_';
+                topSpan.innerHTML = '_'.repeat(top.length);
             }
             if (bottom) {
-                bottomSpan.innerHTML = '_';
+                bottomSpan.innerHTML = '_'.repeat(bottom.length);
             }
             consonantSpan.innerHTML = '_';
         }
