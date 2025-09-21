@@ -168,15 +168,34 @@ h1 {
     margin-bottom: 1rem;
 }
 
-#word-display span {
-    border-bottom: 3px solid var(--secondary-color);
-    display: inline-flex;
-    font-size: 30px;
-    justify-content: center;
-    margin: 0 5px;
-    height: 50px;
+.letter-container {
+    position: relative;
     width: 30px;
-    text-transform: uppercase;
+    height: 60px; /* Increased height to accommodate vowels */
+    border-bottom: 3px solid var(--secondary-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.consonant {
+    font-size: 30px;
+}
+
+.vowel-top, .vowel-bottom {
+    position: absolute;
+    font-size: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.vowel-top {
+    top: -10px;
+}
+
+.vowel-bottom {
+    bottom: -5px;
 }
 
 #message {
@@ -206,12 +225,23 @@ h1 {
 }
 
 #mobile-input {
-    position: absolute;
-    left: -9999px;
-    top: auto;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
+    display: none; /* Hidden by default */
+    width: 100px;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid var(--secondary-color);
+}
+
+#guess-btn {
+    display: none; /* Hidden by default */
+    padding: 10px 15px;
+    font-size: 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 footer {
@@ -286,10 +316,17 @@ footer p {
         height: 250px;
     }
 
-    #word-display span {
-        font-size: 24px;
-        height: 40px;
+    .letter-container {
         width: 24px;
+        height: 50px;
+    }
+
+    .consonant {
+        font-size: 24px;
+    }
+
+    .vowel-top, .vowel-bottom {
+        font-size: 16px;
     }
 
     #message {
@@ -298,5 +335,9 @@ footer p {
 
     #used-letters-container {
         font-size: 1rem;
+    }
+
+    #mobile-input, #guess-btn {
+        display: inline-block;
     }
 }

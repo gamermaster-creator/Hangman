@@ -15,6 +15,9 @@ const categorySelection = document.getElementById('category-selection');
 const categoryDropdown = document.getElementById('category-dropdown');
 const startGameBtn = document.getElementById('start-game-btn');
 const mobileInput = document.getElementById('mobile-input');
+const guessBtn = document.createElement('button');
+guessBtn.textContent = 'Guess';
+guessBtn.id = 'guess-btn';
 
 // Check if the device is mobile
 function isMobile() {
@@ -78,17 +81,61 @@ function startGame() {
     showScreen('game');
 
     if (isMobile()) {
+        mobileInput.style.display = 'inline-block';
+        mobileInput.parentElement.appendChild(guessBtn);
         mobileInput.focus();
     }
+}
+
+// Decompose Thai characters into consonant and vowels
+function decomposeThai(letter) {
+    const topVowels = ['ั', 'ิ', 'ี', 'ึ', 'ื', '็', '่', '้', '๊', '๋', '์', 'ํ', '๎'];
+    const bottomVowels = ['ุ', 'ู', 'ฺ'];
+
+    let consonant = '';
+    let top = '';
+    let bottom = '';
+
+    for (const char of letter) {
+        if (topVowels.includes(char)) {
+            top += char;
+        } else if (bottomVowels.includes(char)) {
+            bottom += char;
+        } else {
+            consonant += char;
+        }
+    }
+
+    return { top, consonant, bottom };
 }
 
 // Update the word display with guessed letters
 function updateWordDisplay() {
     wordDisplay.innerHTML = '';
-    word.split('').forEach(letter => {
-        const span = document.createElement('span');
-        span.textContent = guessedLetters.includes(letter) ? letter : '';
-        wordDisplay.appendChild(span);
+    word.split('').forEach(char => {
+        const letterContainer = document.createElement('div');
+        letterContainer.classList.add('letter-container');
+
+        const topSpan = document.createElement('span');
+        topSpan.classList.add('vowel-top');
+        const consonantSpan = document.createElement('span');
+        consonantSpan.classList.add('consonant');
+        const bottomSpan = document.createElement('span');
+        bottomSpan.classList.add('vowel-bottom');
+
+        if (guessedLetters.includes(char)) {
+            const { top, consonant, bottom } = decomposeThai(char);
+            topSpan.textContent = top;
+            consonantSpan.textContent = consonant;
+            bottomSpan.textContent = bottom;
+        } else {
+            consonantSpan.textContent = ' '; // Keep the space for the underline
+        }
+
+        letterContainer.appendChild(topSpan);
+        letterContainer.appendChild(consonantSpan);
+        letterContainer.appendChild(bottomSpan);
+        wordDisplay.appendChild(letterContainer);
     });
 }
 
@@ -159,14 +206,21 @@ function drawHangman() {
 
 // Handle letter guess
 function handleGuess(key) {
-    const letter = key.toUpperCase();
-    if (gameState !== 'playing' || !/^[฀-๿]$/.test(letter) || guessedLetters.includes(letter)) {
+    const normalizedKey = key.normalize('NFC').toUpperCase();
+
+    if (gameState !== 'playing' || guessedLetters.includes(normalizedKey)) {
         return;
     }
 
-    guessedLetters.push(letter);
+    // Check if any character in the key is a valid Thai character
+    const isValidThai = [...normalizedKey].some(char => /^[฀-๿]$/.test(char));
+    if (!isValidThai) {
+        return;
+    }
 
-    if (word.includes(letter)) {
+    guessedLetters.push(normalizedKey);
+
+    if (word.includes(normalizedKey)) {
         if (word.split('').every(l => guessedLetters.includes(l))) {
             gameState = 'won';
             message.textContent = 'ยินดีด้วย! คุณชนะ! 🎉';
@@ -194,10 +248,11 @@ document.addEventListener('keydown', (e) => {
     handleGuess(e.key);
 });
 
-mobileInput.addEventListener('input', (e) => {
-    const letter = e.target.value;
+guessBtn.addEventListener('click', () => {
+    const letter = mobileInput.value;
     handleGuess(letter);
-    e.target.value = '';
+    mobileInput.value = '';
+    mobileInput.focus();
 });
 
 newGameBtn.addEventListener('click', setupCategories);
