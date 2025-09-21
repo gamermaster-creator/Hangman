@@ -1,0 +1,41 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f8ff;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(4, 100px); /* ตาราง 4x4 */
+    gap: 10px;
+}
+
+.card {
+    width: 100px;
+    height: 100px;
+    background-color: #4a90e2; /* สีด้านหน้าการ์ด */
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+}
+
+/* คลาสที่จะใส่เมื่อการ์ดถูกเปิด */
+.card.flipped {
+    transform: rotateY(180deg);
+}
+
+/* ซ่อนรูปภาพไว้ก่อน */
+.card img {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    transform: rotateY(180deg); /* พลิกรูปภาพกลับมาให้ถูกด้าน */
+    display: none; /* เริ่มต้นด้วยการซ่อนรูป */
+}
+
+.card.flipped img {
+    display: block; /* แสดงรูปเมื่อการ์ดถูกพลิก */
+}
