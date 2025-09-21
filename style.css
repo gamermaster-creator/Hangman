@@ -92,3 +92,13 @@ h1 {
     padding: 20px;
     text-align: center;
 }
+
+.used-letters {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #f0f0f0;
+    text-align: center;
+    font-size: 16px;
+    min-height: 30px;
+}

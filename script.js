@@ -26,6 +26,9 @@ const wordList = [
 let selectedWord = '';
 let correctLetters = [], wrongLetters = [], maxGuesses;
 
+// เพิ่มตัวแปรสำหรับเก็บตัวอักษรที่ใช้แล้ว
+let usedLetters = new Set();
+
 const initGame = (button, clickedLetter) => {
     // สุ่มคำ
     selectedWord = wordList[Math.floor(Math.random() * wordList.length)].word;
@@ -126,56 +129,39 @@ document.addEventListener("keydown", handleKeyPress);
 // เพิ่มฟังก์ชันสำหรับจัดการ input
 function handleInput(letter) {
     if (!letter) return;
+    
+    // แปลงเป็นตัวพิมพ์เล็ก
     letter = letter.toLowerCase();
     
     // ตรวจสอบว่าเป็นตัวอักษรที่ยังไม่ได้ใช้
-    if (!correctLetters.includes(letter) && !wrongLetters.includes(letter)) {
+    if (!usedLetters.has(letter)) {
+        usedLetters.add(letter);
         initGame(null, letter);
+        updateUsedLetters(); // อัพเดทการแสดงผล
     }
 }
 
-// เพิ่ม event listener สำหรับ keyboard input
-document.addEventListener('keydown', (e) => {
+// เพิ่มฟังก์ชันแสดงตัวอักษรที่ใช้แล้ว
+function updateUsedLetters() {
+    const usedLettersDisplay = document.getElementById('used-letters');
+    if (usedLettersDisplay) {
+        usedLettersDisplay.textContent = 'ตัวอักษรที่ใช้แล้ว: ' + Array.from(usedLetters).join(', ');
+    }
+}
+
+// แก้ไข event listener สำหรับคีย์บอร์ด
+document.addEventListener('keypress', (e) => {
+    e.preventDefault();
     handleInput(e.key);
 });
 
-// เพิ่ม input field สำหรับมือถือ
-const mobileInput = document.createElement('input');
-mobileInput.type = 'text';
-mobileInput.style.opacity = '0';
-mobileInput.style.position = 'absolute';
-mobileInput.style.left = '-9999px';
-document.body.appendChild(mobileInput);
-
-// focus input field เมื่อคลิกที่หน้าจอ
-document.addEventListener('click', () => {
-    mobileInput.focus();
-});
-
-// จัดการ input จากมือถือ
-mobileInput.addEventListener('input', (e) => {
-    const letter = e.target.value;
-    handleInput(letter);
-    mobileInput.value = ''; // clear input
-});
-
-// แก้ไขฟังก์ชัน initGame
-function initGame(button, clickedLetter) {
-    if (currentWord.includes(clickedLetter)) {
-        [...currentWord].forEach((letter, index) => {
-            if (letter === clickedLetter) {
-                correctLetters.push(letter);
-                wordDisplay.querySelectorAll("li")[index].innerText = letter;
-                wordDisplay.querySelectorAll("li")[index].classList.add("guessed");
-            }
-        });
-    } else {
-        wrongLetters.push(clickedLetter);
-        guessesText.innerText = `${wrongLetters.length} / ${maxGuesses}`;
-        drawMan(wrongLetters.length);
-    }
-    
-    checkGameOver();
+// รีเซ็ตเกมใหม่
+function resetGame() {
+    usedLetters.clear();
+    correctLetters = [];
+    wrongLetters = [];
+    updateUsedLetters();
+    getRandomWord();
 }
 
 getRandomWord();
