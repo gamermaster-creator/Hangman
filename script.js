@@ -136,11 +136,7 @@ function updateWordDisplay() {
             if (bottom) {
                 bottomSpan.innerHTML = '_';
             }
-            if (!top && !bottom) {
-                consonantSpan.innerHTML = '_';
-            } else {
-                consonantSpan.innerHTML = '&nbsp;';
-            }
+            consonantSpan.innerHTML = '_';
         }
 
         letterContainer.appendChild(topSpan);
