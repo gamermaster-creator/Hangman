@@ -1,30 +1,40 @@
 // --- 1. ส่วนของการตั้งค่า ---
 const wordDisplay = document.getElementById('word-display');
-const keyboard = document.getElementById('keyboard');
+// const keyboard = document.querySelector(".keyboard");
 const figureParts = document.querySelectorAll('.figure-part');
 const notification = document.getElementById('notification');
 const notificationText = document.getElementById('notification-text');
 const playAgainBtn = document.getElementById('play-again');
 
 const thaiAlphabet = 'กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮ';
-const wordList = ['โปรแกรมเมอร์', 'แมวน้ำ', 'รถไฟฟ้า', 'กะเพราไก่', 'จระเข้', 'ไดโนเสาร์', 'โทรทัศน์'];
+const wordList = [
+    {
+        word: "โปรแกรมเมอร์",
+        hint: "ผู้ที่เขียนโค้ดคอมพิวเตอร์"
+    },
+    {
+        word: "กาแฟ",
+        hint: "เครื่องดื่มยอดนิยมในตอนเช้า"
+    },
+    {
+        word: "ประเทศไทย",
+        hint: "ชื่อประเทศของเรา"
+    },
+    // เพิ่มคำศัพท์ภาษาอังกฤษหรือไทยอื่นๆ ที่นี่
+];
 
 let selectedWord = '';
-let correctLetters = [];
-let wrongGuesses = 0;
+let correctLetters = [], wrongLetters = [], maxGuesses;
 
-// --- 2. ฟังก์ชันหลักของเกม ---
-
-// สุ่มคำศัพท์และเริ่มเกมใหม่
-function startGame() {
+const initGame = (button, clickedLetter) => {
     // สุ่มคำ
-    selectedWord = wordList[Math.floor(Math.random() * wordList.length)];
+    selectedWord = wordList[Math.floor(Math.random() * wordList.length)].word;
     
     // รีเซ็ตค่าต่างๆ
     correctLetters = [];
-    wrongGuesses = 0;
+    wrongLetters = [];
     wordDisplay.innerHTML = '';
-    keyboard.innerHTML = '';
+    // keyboard.innerHTML = '';
     notification.classList.remove('show');
     figureParts.forEach(part => part.style.display = 'none');
 
@@ -41,6 +51,9 @@ function startGame() {
         button.addEventListener('click', () => handleGuess(char, button));
         keyboard.appendChild(button);
     });
+
+    maxGuesses = 6; // จำนวนครั้งสูงสุดที่ผู้เล่นสามารถทายผิดได้
+    guessesText.innerText = `0 / ${maxGuesses}`; // รีเซ็ตข้อความแสดงจำนวนการทายผิด
 }
 
 // จัดการเมื่อผู้เล่นกดทาย
@@ -54,6 +67,8 @@ function handleGuess(letter, button) {
     } else {
         // ถ้าทายผิด
         wrongGuesses++;
+        wrongLetters.push(letter);
+        guessesText.innerText = `${wrongLetters.length} / ${maxGuesses}`;
         updateFigure();
     }
     checkGameStatus();
@@ -92,9 +107,22 @@ function checkGameStatus() {
     }
 }
 
+// ฟังก์ชันสำหรับจัดการการกดคีย์บอร์ด
+const handleKeyPress = (e) => {
+    const key = e.key.toLowerCase();
+    // ตรวจสอบว่าเป็นตัวอักษรไทยหรืออังกฤษเท่านั้น และยังไม่เคยทายตัวอักษรนี้
+    if (key.match(/^[a-zก-ฮเ-์]$/) && !wrongLetters.includes(key) && !correctLetters.includes(key)) {
+        initGame(null, key); // เรียกใช้ฟังก์ชันเกมหลัก
+    }
+}
 
-// --- 3. การควบคุม Event และการเริ่มเกม ---
-playAgainBtn.addEventListener('click', startGame);
+// เพิ่ม event listener สำหรับการกดคีย์บอร์ด
+document.addEventListener("keydown", handleKeyPress);
+
+getRandomWord();
+
+
+// --- 3. การควบคุม Event และการเริ่มเกม ---playAgainBtn.addEventListener('click', startGame);
 
 // เริ่มเกมครั้งแรก
 startGame();
