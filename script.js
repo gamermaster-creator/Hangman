@@ -141,6 +141,13 @@ function handleGuess(letter) {
     } else {
         if (button) button.classList.add('wrong');
         wrongGuesses++;
+
+        // Add shake animation to canvas
+        canvas.classList.add('shake');
+        setTimeout(() => {
+            canvas.classList.remove('shake');
+        }, 500);
+
         drawHangman();
         
         if (wrongGuesses >= maxWrongGuesses) {
