@@ -8,6 +8,7 @@
     --wrong-color: #f44336;
     --disabled-color: #ccc;
     --button-bg: #e1e1e1;
+    --button-hover-bg: #d1d1d1;
     --container-bg: #fff;
 }
 
@@ -21,6 +22,7 @@
     --wrong-color: #e57373;
     --disabled-color: #666;
     --button-bg: #333;
+    --button-hover-bg: #444;
     --container-bg: #2d2d2d;
 }
 
@@ -83,8 +85,7 @@ body {
 }
 
 h1 {
-    color: #333;
-    margin-bottom: 2rem;
+    color: bottom: 2rem;
     text-align: center;
 }
 
@@ -100,9 +101,8 @@ h1 {
 .hangman-box {
     margin-bottom: 1.5rem;
     fill: none;
-    stroke: #000; /* Change hangman color to black */
-    stroke-width: 4px;
-    stroke-linecap: round;
+    stroke: var(--text-color); /* Change hangman color to black */
+    stroke-inecap: round;
 }
 
 .figure-part {
@@ -116,10 +116,9 @@ h1 {
 }
 
 #word-display span, .letter {
-    border-bottom: 3px solid #333;
+    border-bottom: 3px solid var(--secondary-color);
     display: inline-flex;
-    font-size: 30px;
-    align-items: center;
+    font-size: 30px; 
     justify-content: center;
     margin: 0 5px;
     height: 50px;
@@ -170,24 +169,24 @@ h1 {
 .keyboard button, .key {
     width: 45px;
     height: 45px;
-    background: #e1e1e1;
+    background: var(--button-bg);
     border: none;
-    border-radius: 5px;
-    font-size: 1.2rem;
+    border-radiu
     font-weight: 600;
     cursor: pointer;
     transition: background 0.3s;
-    color: #000; /* Ensure keyboard text is black */
+    color: var(--text-color); /* Ensure keyboard text is black */
 }
 
 .keyboard button:hover, .key:hover {
-    background: #d1d1d1;
-}
+    backgr}
 
 .keyboard button:disabled, .key:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    color: #666;
+    background: var(--disabled-color);
+    cursor: not 
+}
+
+[data-theme="dark"] .keyboard button:disab
 }
 
 .keyboard button.correct {

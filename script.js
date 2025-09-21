@@ -60,7 +60,7 @@ function updateUsedLetters() {
 
 // Draw hangman based on wrong guesses
 function drawHangman() {
-    ctx.strokeStyle = '#333';
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
     ctx.lineWidth = 2;
     
     // Clear canvas
@@ -192,6 +192,7 @@ themeToggleBtn.addEventListener('click', () => {
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
     updateThemeIcon(newTheme);
+    drawHangman();
 });
 
 function updateThemeIcon(theme) {
