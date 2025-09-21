@@ -205,6 +205,15 @@ h1 {
     min-height: 30px;
 }
 
+#mobile-input {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
 footer {
     width: 100%;
     text-align: center;
@@ -260,4 +269,34 @@ footer p {
     padding: 20px;
     text-align: center;
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    #hangman {
+        width: 250px;
+        height: 250px;
+    }
+
+    #word-display span {
+        font-size: 24px;
+        height: 40px;
+        width: 24px;
+    }
+
+    #message {
+        font-size: 1rem;
+    }
+
+    #used-letters-container {
+        font-size: 1rem;
+    }
 }

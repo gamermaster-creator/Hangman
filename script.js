@@ -14,6 +14,12 @@ const newGameBtn = document.getElementById('new-game');
 const categorySelection = document.getElementById('category-selection');
 const categoryDropdown = document.getElementById('category-dropdown');
 const startGameBtn = document.getElementById('start-game-btn');
+const mobileInput = document.getElementById('mobile-input');
+
+// Check if the device is mobile
+function isMobile() {
+    return window.innerWidth <= 768;
+}
 
 // Fetch words from JSON
 async function loadWords() {
@@ -70,6 +76,10 @@ function startGame() {
     updateWordDisplay();
     drawHangman();
     showScreen('game');
+
+    if (isMobile()) {
+        mobileInput.focus();
+    }
 }
 
 // Update the word display with guessed letters
@@ -182,6 +192,12 @@ function handleGuess(key) {
 // Event listeners
 document.addEventListener('keydown', (e) => {
     handleGuess(e.key);
+});
+
+mobileInput.addEventListener('input', (e) => {
+    const letter = e.target.value;
+    handleGuess(letter);
+    e.target.value = '';
 });
 
 newGameBtn.addEventListener('click', setupCategories);
