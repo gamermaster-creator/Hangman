@@ -1,9 +1,8 @@
-body {
-    font-family: 'Sarabun', sans-serif; * {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: 'Sarabun', sans-serif;
 }
 
 body {
@@ -12,6 +11,7 @@ body {
     align-items: center;
     min-height: 100vh;
     background: #f0f0f0;
+    color: #000; /* Set default text color to black */
 }
 
 .container {
@@ -31,16 +31,25 @@ h1 {
     text-align: center;
 }
 
-.hangman-box {
-    margin-bottom: 1.5rem;
-}
-
-.game-box {
-    width: 100%;
+.game-container {
+    padding: 20px 30px;
+    position: relative;
+    margin: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+}
+
+.hangman-box {
+    margin-bottom: 1.5rem;
+    fill: none;
+    stroke: #000; /* Change hangman color to black */
+    stroke-width: 4px;
+    stroke-linecap: round;
+}
+
+.figure-part {
+    display: none;
 }
 
 #word-display {
@@ -49,16 +58,17 @@ h1 {
     margin-bottom: 1rem;
 }
 
-#word-display span {
-    width: 30px;
-    height: 40px;
-    font-size: 2rem;
-    font-weight: 600;
+#word-display span, .letter {
     border-bottom: 3px solid #333;
-    display: flex;
-    justify-content: center;
+    display: inline-flex;
+    font-size: 30px;
     align-items: center;
+    justify-content: center;
+    margin: 0 5px;
+    height: 50px;
+    width: 30px;
     text-transform: uppercase;
+    color: #000; /* Ensure letter color is black */
 }
 
 #message {
@@ -66,6 +76,7 @@ h1 {
     text-align: center;
     margin: 1rem 0;
     min-height: 24px;
+    color: #000; /* Ensure message color is black */
 }
 
 #used-letters-container {
@@ -78,6 +89,13 @@ h1 {
 #used-letters {
     font-weight: bold;
     color: #333;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #f0f0f0;
+    text-align: center;
+    font-size: 16px;
+    min-height: 30px;
 }
 
 .keyboard {
@@ -92,7 +110,7 @@ h1 {
     gap: 5px;
 }
 
-.keyboard button {
+.keyboard button, .key {
     width: 45px;
     height: 45px;
     background: #e1e1e1;
@@ -102,13 +120,14 @@ h1 {
     font-weight: 600;
     cursor: pointer;
     transition: background 0.3s;
+    color: #000; /* Ensure keyboard text is black */
 }
 
-.keyboard button:hover {
+.keyboard button:hover, .key:hover {
     background: #d1d1d1;
 }
 
-.keyboard button:disabled {
+.keyboard button:disabled, .key:disabled {
     background: #ccc;
     cursor: not-allowed;
     color: #666;
@@ -138,74 +157,6 @@ h1 {
 .new-game-btn:hover {
     background: #1976d2;
 }
-    background-color: #34495e;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-}
-
-h1 {
-    color: #f1c40f;
-}
-
-.game-container {
-    padding: 20px 30px;
-    position: relative;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.hangman-box {
-    fill: none;
-    stroke: #fff;
-    stroke-width: 4px;
-    stroke-linecap: round;
-}
-
-.figure-part {
-    display: none; /* ซ่อนชิ้นส่วนร่างกายไว้ก่อน */
-}
-
-.word-display {
-    display: flex;
-    margin-top: 20px;
-}
-
-.letter {
-    border-bottom: 3px solid #f1c40f;
-    display: inline-flex;
-    font-size: 30px;
-    align-items: center;
-    justify-content: center;
-    margin: 0 5px;
-    height: 50px;
-    width: 30px;
-}
-
-.keyboard {
-    display: none;
-}
-
-.key {
-    background-color: #fff;
-    border: none;
-    color: #34495e;
-    cursor: pointer;
-    font-size: 20px;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.key:disabled {
-    background-color: #95a5a6;
-    cursor: not-allowed;
-}
 
 .notification-container {
     background-color: rgba(0, 0, 0, 0.3);
@@ -214,29 +165,20 @@ h1 {
     bottom: 0;
     left: 0;
     right: 0;
-    display: none; /* ซ่อนไว้ก่อน */
+    display: none;
     align-items: center;
     justify-content: center;
 }
 
 .notification-container.show {
-    display: flex; /* แสดงเมื่อเกมจบ */
+    display: flex;
 }
 
 .notification {
-    background: #f1c40f;
-    color: #34495e;
+    background: #fff;
+    color: #333;
     border-radius: 5px;
     padding: 20px;
     text-align: center;
-}
-
-.used-letters {
-    margin-top: 20px;
-    padding: 10px;
-    border-radius: 8px;
-    background: #f0f0f0;
-    text-align: center;
-    font-size: 16px;
-    min-height: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }

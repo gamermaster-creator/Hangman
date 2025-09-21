@@ -171,8 +171,14 @@ keyboard.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
     handleGuess(e.key);
 });
+<<<<<<< HEAD
 
 newGameBtn.addEventListener('click', initGame);
 
+=======
+
+newGameBtn.addEventListener('click', initGame);
+
+>>>>>>> ffd6cc56d0cff7d49464bc639e247125c7f95c18
 // Start the game
 initGame();
