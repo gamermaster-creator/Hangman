@@ -1,3 +1,29 @@
+:root {
+    --bg-color: #f0f0f0;
+    --text-color: #000;
+    --primary-color: #2196f3;
+    --secondary-color: #333;
+    --hover-color: #1976d2;
+    --correct-color: #4caf50;
+    --wrong-color: #f44336;
+    --disabled-color: #ccc;
+    --button-bg: #e1e1e1;
+    --container-bg: #fff;
+}
+
+[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --text-color: #fff;
+    --primary-color: #64b5f6;
+    --secondary-color: #bbb;
+    --hover-color: #42a5f5;
+    --correct-color: #81c784;
+    --wrong-color: #e57373;
+    --disabled-color: #666;
+    --button-bg: #333;
+    --container-bg: #2d2d2d;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -10,19 +36,50 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: #f0f0f0;
-    color: #000; /* Set default text color to black */
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .container {
     width: 850px;
-    background: white;
+    background: var(--container-bg);
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    min-height: 100vh;
+    position: relative;
+}
+
+.theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+}
+
+#theme-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+}
+
+#theme-toggle-btn:hover {
+    background: rgba(0,0,0,0.1);
+}
+
+#theme-toggle-btn .material-icons {
+    font-size: 24px;
+    color: var(--text-color);
 }
 
 h1 {
@@ -155,19 +212,36 @@ h1 {
     color: white;
 }
 
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+footer p {
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
 .new-game-btn {
     padding: 12px 24px;
-    background: #2196f3;
+    background: var(--primary-color);
     color: white;
     border: none;
     border-radius: 5px;
     font-size: 1rem;
     cursor: pointer;
     transition: background 0.3s;
+    margin-bottom: 1rem;
 }
 
 .new-game-btn:hover {
-    background: #1976d2;
+    background: var(--hover-color);
 }
 
 .notification-container {

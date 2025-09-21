@@ -180,5 +180,30 @@ newGameBtn.addEventListener('click', initGame);
 newGameBtn.addEventListener('click', initGame);
 
 >>>>>>> ffd6cc56d0cff7d49464bc639e247125c7f95c18
+// Theme toggle functionality
+const themeToggleBtn = document.getElementById('theme-toggle-btn');
+const themeIcon = document.getElementById('theme-icon');
+
+// Check for saved theme preference, otherwise use device preference
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const savedTheme = localStorage.getItem('theme') || (prefersDark ? 'dark' : 'light');
+
+// Apply the saved theme
+document.documentElement.setAttribute('data-theme', savedTheme);
+updateThemeIcon(savedTheme);
+
+themeToggleBtn.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeIcon(newTheme);
+});
+
+function updateThemeIcon(theme) {
+    themeIcon.textContent = theme === 'dark' ? 'dark_mode' : 'light_mode';
+}
+
 // Start the game
 initGame();

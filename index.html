@@ -4,38 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hangman Game</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="theme-toggle">
+        <button id="theme-toggle-btn">
+            <span class="material-icons" id="theme-icon">light_mode</span>
+        </button>
+    </div>
     <div class="container">
-        <h1>Hangman Game</h1>
-        <div class="hangman-box">
-            <canvas id="hangman" width="300" height="300"></canvas>
-        </div>
-        <div class="game-box">
-            <div id="word-display"></div>
-            <div id="used-letters-container">
-                <p>Used Letters: <span id="used-letters"></span></p>
+        <header>
+            <h1>Hangman Game</h1>
+        </header>
+        <main class="game-container">
+            <div class="hangman-box">
+                <canvas id="hangman" width="300" height="300"></canvas>
             </div>
-            <div id="message"></div>
-            <div id="keyboard" class="keyboard">
-                <div class="keyboard-row">
-                    <button>Q</button><button>W</button><button>E</button><button>R</button>
-                    <button>T</button><button>Y</button><button>U</button><button>I</button>
-                    <button>O</button><button>P</button>
+            <div class="game-box">
+                <div id="word-display"></div>
+                <div id="used-letters-container">
+                    <p>Used Letters: <span id="used-letters"></span></p>
                 </div>
-                <div class="keyboard-row">
-                    <button>A</button><button>S</button><button>D</button><button>F</button>
-                    <button>G</button><button>H</button><button>J</button><button>K</button>
-                    <button>L</button>
-                </div>
-                <div class="keyboard-row">
-                    <button>Z</button><button>X</button><button>C</button><button>V</button>
-                    <button>B</button><button>N</button><button>M</button>
+                <div id="message"></div>
+                <div id="keyboard" class="keyboard">
+                    <div class="keyboard-row">
+                        <button>Q</button><button>W</button><button>E</button><button>R</button>
+                        <button>T</button><button>Y</button><button>U</button><button>I</button>
+                        <button>O</button><button>P</button>
+                    </div>
+                    <div class="keyboard-row">
+                        <button>A</button><button>S</button><button>D</button><button>F</button>
+                        <button>G</button><button>H</button><button>J</button><button>K</button>
+                        <button>L</button>
+                    </div>
+                    <div class="keyboard-row">
+                        <button>Z</button><button>X</button><button>C</button><button>V</button>
+                        <button>B</button><button>N</button><button>M</button>
+                    </div>
                 </div>
             </div>
+        </main>
+        <footer>
             <button id="new-game" class="new-game-btn">New Game</button>
-        </div>
+            <p>&copy; 2025 Hangman Game</p>
+        </footer>
     </div>
     <script src="script.js"></script>
 </body>
