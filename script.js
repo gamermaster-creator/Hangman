@@ -119,6 +119,65 @@ const handleKeyPress = (e) => {
 // เพิ่ม event listener สำหรับการกดคีย์บอร์ด
 document.addEventListener("keydown", handleKeyPress);
 
+// ลบ/คอมเมนต์ส่วนการสร้างปุ่มเดิมออก
+// const keyboard = document.querySelector(".keyboard");
+// keyboard.innerHTML = ''; // ลบปุ่มเดิมออก
+
+// เพิ่มฟังก์ชันสำหรับจัดการ input
+function handleInput(letter) {
+    if (!letter) return;
+    letter = letter.toLowerCase();
+    
+    // ตรวจสอบว่าเป็นตัวอักษรที่ยังไม่ได้ใช้
+    if (!correctLetters.includes(letter) && !wrongLetters.includes(letter)) {
+        initGame(null, letter);
+    }
+}
+
+// เพิ่ม event listener สำหรับ keyboard input
+document.addEventListener('keydown', (e) => {
+    handleInput(e.key);
+});
+
+// เพิ่ม input field สำหรับมือถือ
+const mobileInput = document.createElement('input');
+mobileInput.type = 'text';
+mobileInput.style.opacity = '0';
+mobileInput.style.position = 'absolute';
+mobileInput.style.left = '-9999px';
+document.body.appendChild(mobileInput);
+
+// focus input field เมื่อคลิกที่หน้าจอ
+document.addEventListener('click', () => {
+    mobileInput.focus();
+});
+
+// จัดการ input จากมือถือ
+mobileInput.addEventListener('input', (e) => {
+    const letter = e.target.value;
+    handleInput(letter);
+    mobileInput.value = ''; // clear input
+});
+
+// แก้ไขฟังก์ชัน initGame
+function initGame(button, clickedLetter) {
+    if (currentWord.includes(clickedLetter)) {
+        [...currentWord].forEach((letter, index) => {
+            if (letter === clickedLetter) {
+                correctLetters.push(letter);
+                wordDisplay.querySelectorAll("li")[index].innerText = letter;
+                wordDisplay.querySelectorAll("li")[index].classList.add("guessed");
+            }
+        });
+    } else {
+        wrongLetters.push(clickedLetter);
+        guessesText.innerText = `${wrongLetters.length} / ${maxGuesses}`;
+        drawMan(wrongLetters.length);
+    }
+    
+    checkGameOver();
+}
+
 getRandomWord();
 
 

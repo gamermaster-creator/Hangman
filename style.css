@@ -51,10 +51,7 @@ h1 {
 }
 
 .keyboard {
-    margin-top: 30px;
-    display: grid;
-    grid-template-columns: repeat(11, 40px); /* จัดเรียงปุ่ม */
-    gap: 5px;
+    display: none;
 }
 
 .key {
