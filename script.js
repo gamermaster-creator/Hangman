@@ -23,24 +23,40 @@ const wordList = [
     // เพิ่มคำศัพท์ภาษาอังกฤษหรือไทยอื่นๆ ที่นี่
 ];
 
+// เพิ่มอาร์เรย์สำหรับเก็บคำศัพท์
+const words = [
+    "programming",
+    "computer",
+    "javascript",
+    "keyboard",
+    // เพิ่มคำอื่นๆ ตามต้องการ
+];
+
 let currentWord, correctLetters = [], wrongLetters = [], maxGuesses;
 let gameInProgress = false;
+let usedLetters = new Set();
 
 // ฟังก์ชันเริ่มเกมใหม่
 function initNewGame() {
-    currentWord = wordList[Math.floor(Math.random() * wordList.length)].word;
+    // สุ่มคำใหม่
+    currentWord = words[Math.floor(Math.random() * words.length)].toLowerCase();
     correctLetters = [];
     wrongLetters = [];
-    usedLetters = new Set();
+    usedLetters.clear();
     gameInProgress = true;
-    maxGuesses = 6; // หรือตามที่คุณกำหนด
+    maxGuesses = 6;
     
     // รีเซ็ตการแสดงผล
     updateUsedLetters();
     updateWordDisplay();
-    guessesText.innerText = `${wrongLetters.length} / ${maxGuesses}`;
-    notification.classList.remove('show');
-    figureParts.forEach(part => part.style.display = 'none');
+    const guessesText = document.querySelector(".guesses-text");
+    if (guessesText) {
+        guessesText.innerText = `${wrongLetters.length} / ${maxGuesses}`;
+    }
+    const gameModal = document.querySelector(".game-modal");
+    if (gameModal) {
+        gameModal.classList.remove("show");
+    }
 }
 
 // ฟังก์ชันจัดการ input
@@ -71,7 +87,10 @@ function processGuess(letter) {
     } else {
         // ทายผิด
         wrongLetters.push(letter);
-        guessesText.innerText = `${wrongLetters.length} / ${maxGuesses}`;
+        const guessesText = document.querySelector(".guesses-text");
+        if (guessesText) {
+            guessesText.innerText = `${wrongLetters.length} / ${maxGuesses}`;
+        }
         updateFigure();
     }
     
