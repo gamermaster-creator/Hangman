@@ -23,90 +23,86 @@ const wordList = [
     // เพิ่มคำศัพท์ภาษาอังกฤษหรือไทยอื่นๆ ที่นี่
 ];
 
-let selectedWord = '';
-let correctLetters = [], wrongLetters = [], maxGuesses;
+let currentWord, correctLetters = [], wrongLetters = [], maxGuesses;
+let gameInProgress = false;
 
-// เพิ่มตัวแปรสำหรับเก็บตัวอักษรที่ใช้แล้ว
-let usedLetters = new Set();
-
-const initGame = (button, clickedLetter) => {
-    // สุ่มคำ
-    selectedWord = wordList[Math.floor(Math.random() * wordList.length)].word;
-    
-    // รีเซ็ตค่าต่างๆ
+// ฟังก์ชันเริ่มเกมใหม่
+function initNewGame() {
+    currentWord = wordList[Math.floor(Math.random() * wordList.length)].word;
     correctLetters = [];
     wrongLetters = [];
-    wordDisplay.innerHTML = '';
-    // keyboard.innerHTML = '';
+    usedLetters = new Set();
+    gameInProgress = true;
+    maxGuesses = 6; // หรือตามที่คุณกำหนด
+    
+    // รีเซ็ตการแสดงผล
+    updateUsedLetters();
+    updateWordDisplay();
+    guessesText.innerText = `${wrongLetters.length} / ${maxGuesses}`;
     notification.classList.remove('show');
     figureParts.forEach(part => part.style.display = 'none');
-
-    // แสดงคำใบ้ (ขีด _)
-    selectedWord.split('').forEach(() => {
-        wordDisplay.innerHTML += `<span class="letter"></span>`;
-    });
-
-    // สร้างแป้นพิมพ์
-    thaiAlphabet.split('').forEach(char => {
-        const button = document.createElement('button');
-        button.innerText = char;
-        button.classList.add('key');
-        button.addEventListener('click', () => handleGuess(char, button));
-        keyboard.appendChild(button);
-    });
-
-    maxGuesses = 6; // จำนวนครั้งสูงสุดที่ผู้เล่นสามารถทายผิดได้
-    guessesText.innerText = `0 / ${maxGuesses}`; // รีเซ็ตข้อความแสดงจำนวนการทายผิด
 }
 
-// จัดการเมื่อผู้เล่นกดทาย
-function handleGuess(letter, button) {
-    button.disabled = true; // ปิดปุ่มที่กดแล้ว
+// ฟังก์ชันจัดการ input
+function handleInput(letter) {
+    if (!letter || !gameInProgress) return;
+    
+    letter = letter.toLowerCase();
+    
+    // ตรวจสอบว่าเป็นตัวอักษรที่ยังไม่ได้ใช้
+    if (!usedLetters.has(letter)) {
+        usedLetters.add(letter);
+        processGuess(letter);
+        updateUsedLetters();
+    }
+}
 
-    if (selectedWord.includes(letter)) {
-        // ถ้าทายถูก
-        correctLetters.push(letter);
-        displayWord();
+// ฟังก์ชันประมวลผลตัวอักษรที่ทาย
+function processGuess(letter) {
+    if (currentWord.includes(letter)) {
+        // ทายถูก
+        [...currentWord].forEach((char, index) => {
+            if(char === letter) {
+                correctLetters.push(letter);
+                wordDisplay.querySelectorAll("li")[index].innerText = letter;
+                wordDisplay.querySelectorAll("li")[index].classList.add("guessed");
+            }
+        });
     } else {
-        // ถ้าทายผิด
-        wrongGuesses++;
+        // ทายผิด
         wrongLetters.push(letter);
         guessesText.innerText = `${wrongLetters.length} / ${maxGuesses}`;
         updateFigure();
     }
-    checkGameStatus();
-}
-
-// อัปเดตการแสดงผลคำศัพท์
-function displayWord() {
-    const letters = wordDisplay.querySelectorAll('.letter');
-    selectedWord.split('').forEach((char, index) => {
-        if (correctLetters.includes(char)) {
-            letters[index].innerText = char;
-        }
-    });
+    
+    checkGameEnd();
 }
 
 // อัปเดตภาพ Hangman
 function updateFigure() {
-    for (let i = 0; i < wrongGuesses; i++) {
+    for (let i = 0; i < wrongLetters.length; i++) {
         figureParts[i].style.display = 'block';
     }
 }
 
-// ตรวจสอบสถานะเกม (ชนะ/แพ้)
-function checkGameStatus() {
-    // เช็คว่าชนะหรือไม่
-    const isWinner = selectedWord.split('').every(letter => correctLetters.includes(letter));
-    if (isWinner) {
-        notificationText.innerText = 'ยินดีด้วย! คุณชนะ!';
-        notification.classList.add('show');
-    }
-
-    // เช็คว่าแพ้หรือไม่
-    if (wrongGuesses >= figureParts.length) {
-        notificationText.innerText = `คุณแพ้แล้ว! คำที่ถูกต้องคือ: ${selectedWord}`;
-        notification.classList.add('show');
+// ฟังก์ชันตรวจสอบการจบเกม
+function checkGameEnd() {
+    let wordGuessed = currentWord
+        .split('')
+        .every(letter => correctLetters.includes(letter));
+    
+    if (wordGuessed) {
+        gameInProgress = false;
+        setTimeout(() => {
+            notificationText.innerText = 'ยินดีด้วย! คุณชนะ!';
+            notification.classList.add('show');
+        }, 300);
+    } else if (wrongLetters.length >= maxGuesses) {
+        gameInProgress = false;
+        setTimeout(() => {
+            notificationText.innerText = `คุณแพ้แล้ว! คำที่ถูกต้องคือ: ${currentWord}`;
+            notification.classList.add('show');
+        }, 300);
     }
 }
 
@@ -115,7 +111,7 @@ const handleKeyPress = (e) => {
     const key = e.key.toLowerCase();
     // ตรวจสอบว่าเป็นตัวอักษรไทยหรืออังกฤษเท่านั้น และยังไม่เคยทายตัวอักษรนี้
     if (key.match(/^[a-zก-ฮเ-์]$/) && !wrongLetters.includes(key) && !correctLetters.includes(key)) {
-        initGame(null, key); // เรียกใช้ฟังก์ชันเกมหลัก
+        initNewGame(null, key); // เรียกใช้ฟังก์ชันเกมหลัก
     }
 }
 
@@ -136,7 +132,7 @@ function handleInput(letter) {
     // ตรวจสอบว่าเป็นตัวอักษรที่ยังไม่ได้ใช้
     if (!usedLetters.has(letter)) {
         usedLetters.add(letter);
-        initGame(null, letter);
+        initNewGame(null, letter);
         updateUsedLetters(); // อัพเดทการแสดงผล
     }
 }
@@ -161,7 +157,7 @@ function resetGame() {
     correctLetters = [];
     wrongLetters = [];
     updateUsedLetters();
-    getRandomWord();
+    initNewGame();
 }
 
 getRandomWord();
