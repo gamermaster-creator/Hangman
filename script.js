@@ -126,20 +126,13 @@ function updateWordDisplay() {
         const bottomSpan = document.createElement('span');
         bottomSpan.classList.add('vowel-bottom');
 
-        const { top, consonant, bottom } = decomposeThai(char);
-
         if (guessedLetters.includes(char)) {
+            const { top, consonant, bottom } = decomposeThai(char);
             topSpan.textContent = top;
             consonantSpan.textContent = consonant;
             bottomSpan.textContent = bottom;
         } else {
-            if (top) {
-                topSpan.innerHTML = '_'.repeat(top.length);
-            }
-            if (bottom) {
-                bottomSpan.innerHTML = '_'.repeat(bottom.length);
-            }
-            consonantSpan.innerHTML = '_';
+            consonantSpan.innerHTML = '&nbsp;';
         }
 
         letterContainer.appendChild(topSpan);
