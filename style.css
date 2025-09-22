@@ -183,25 +183,29 @@ h1 {
 
 .vowel-left {
     position: absolute;
-    right: 100%; /* position to the left of the base consonant */
-    transform: translateX(-10%);
+    right: 110%; /* position to the left of the base consonant */
+    transform: translateX(0);
     top: 28px; /* align vertically near the consonant middle */
     font-size: 20px;
+    z-index: 3;
 }
 
 .consonant {
     font-size: 30px;
     bottom: 8px;
+    z-index: 1;
 }
 
 .vowel-top {
     font-size: 20px;
-    top: -6px;
+    top: -10px;
+    z-index: 4;
 }
 
 .vowel-bottom {
     font-size: 20px;
     bottom: -26px;
+    z-index: 3;
 }
 
 #message {
