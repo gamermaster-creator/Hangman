@@ -217,9 +217,20 @@ function updateWordDisplay() {
 
         // Show each part only when that specific character(s) has been guessed
     leftSpan.textContent = parts.left && guessedLetters.some(g => parts.left.includes(g)) ? parts.left : '';
-    const topRevealed = parts.top && guessedLetters.some(g => parts.top.includes(g));
-    topSpan.textContent = topRevealed ? parts.top : '';
-    topPlaceholder.textContent = (parts.top && !topRevealed) ? '_' : '';
+        const topRevealed = parts.top && guessedLetters.some(g => parts.top.includes(g));
+        topSpan.textContent = topRevealed ? parts.top : '';
+        // if top has multiple combining marks, create stacked underscores
+        if (parts.top && !topRevealed) {
+            topPlaceholder.innerHTML = '';
+            [...parts.top].forEach(() => {
+                const s = document.createElement('div');
+                s.textContent = '_';
+                s.className = 'placeholder-top-level';
+                topPlaceholder.appendChild(s);
+            });
+        } else {
+            topPlaceholder.textContent = '';
+        }
 
     const consonantRevealed = parts.consonant && guessedLetters.some(g => parts.consonant.includes(g));
     consonantSpan.textContent = consonantRevealed ? parts.consonant : '';
@@ -227,9 +238,19 @@ function updateWordDisplay() {
     const rightRevealed = parts.right && guessedLetters.some(g => parts.right.includes(g));
     rightSpan.textContent = rightRevealed ? parts.right : '';
 
-    const bottomRevealed = parts.bottom && guessedLetters.some(g => parts.bottom.includes(g));
-    bottomSpan.textContent = bottomRevealed ? parts.bottom : '';
-    bottomPlaceholder.textContent = (parts.bottom && !bottomRevealed) ? '_' : '';
+        const bottomRevealed = parts.bottom && guessedLetters.some(g => parts.bottom.includes(g));
+        bottomSpan.textContent = bottomRevealed ? parts.bottom : '';
+        if (parts.bottom && !bottomRevealed) {
+            bottomPlaceholder.innerHTML = '';
+            [...parts.bottom].forEach(() => {
+                const s = document.createElement('div');
+                s.textContent = '_';
+                s.className = 'placeholder-bottom-level';
+                bottomPlaceholder.appendChild(s);
+            });
+        } else {
+            bottomPlaceholder.textContent = '';
+        }
 
         // if nothing of the base consonant revealed, show placeholder
         if (!consonantSpan.textContent) consonantSpan.innerHTML = '&nbsp;';
