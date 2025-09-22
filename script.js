@@ -4,6 +4,7 @@ let guessedLetters = [];
 let wrongGuesses = 0;
 const maxWrongGuesses = 6;
 let gameState = 'choosing'; // choosing, playing, won, lost
+let wordClusters = []; // store grapheme clusters (so Thai combining marks stay with base)
 
 const canvas = document.getElementById('hangman');
 const ctx = canvas.getContext('2d');
@@ -58,7 +59,9 @@ function showScreen(screen) {
 function startGame() {
     const selectedCategory = categoryDropdown.value;
     const words = wordsData[selectedCategory].words;
+    // pick a word and prepare grapheme clusters so accents/diacritics stay attached
     word = words[Math.floor(Math.random() * words.length)].toUpperCase();
+    wordClusters = splitGraphemes(word);
     guessedLetters = [];
     wrongGuesses = 0;
     gameState = 'playing';
@@ -74,51 +77,120 @@ function startGame() {
 }
 
 // Decompose Thai characters into consonant and vowels
-function decomposeThai(letter) {
-    const topChars = [
+// Decompose a Thai grapheme cluster into visual parts: left (pre-base vowels), top marks, base consonant(s), and bottom marks
+function decomposeThai(cluster) {
+    // Reference ranges / codepoints for common Thai marks
+    const leftVowels = ['\u0E40','\u0E41','\u0E42','\u0E43','\u0E44']; // เ แ โ ใ ไ
+    const topMarks = [
         '\u0E31', // ั
         '\u0E34', // ิ
         '\u0E35', // ี
         '\u0E36', // ึ
         '\u0E37', // ื
         '\u0E47', // ็
-        '\u0E48', // ่
-        '\u0E49', // ้
-        '\u0E4A', // ๊
-        '\u0E4B', // ๋
-        '\u0E4C', // ์
         '\u0E4D', // ํ
-        '\u0E4E', // ๎
+        '\u0E4C'  // ์ (thanthakhat)
     ];
-    const bottomChars = ['\u0E38', '\u0E39', '\u0E3A']; // ุ, ู, ฺ
+    const toneMarks = ['\u0E48','\u0E49','\u0E4A','\u0E4B']; // ่ ้ ๊ ๋
+    const bottomMarks = ['\u0E38','\u0E39','\u0E3A','\u0E4E']; // ุ ู ฺ ๎
 
-    let consonant = '';
+    let left = '';
     let top = '';
+    let tone = '';
+    let consonant = '';
     let bottom = '';
 
-    // Using normalize to decompose combined characters
-    const decomposed = letter.normalize('NFD');
+    // iterate characters in the cluster (already a grapheme, but may contain multiple codepoints)
+    const chars = [...cluster];
 
-    for (const char of decomposed) {
-        if (topChars.includes(char)) {
-            top += char;
-        } else if (bottomChars.includes(char)) {
-            bottom += char;
-        } else {
-            consonant += char;
+    // simple heuristic: left vowels usually come first, then base consonant(s), then combining marks
+    for (let i = 0; i < chars.length; i++) {
+        const ch = chars[i];
+        if (i === 0 && leftVowels.includes(ch)) {
+            left += ch;
+            continue;
         }
+
+        if (topMarks.includes(ch)) {
+            top += ch;
+            continue;
+        }
+
+        if (toneMarks.includes(ch)) {
+            tone += ch;
+            continue;
+        }
+
+        if (bottomMarks.includes(ch)) {
+            bottom += ch;
+            continue;
+        }
+
+        // otherwise treat as (part of) the base consonant
+        consonant += ch;
     }
 
-    return { top, consonant, bottom };
+    // combine tone into top for rendering convenience
+    if (tone) top = tone + top;
+
+    return { left, top, consonant, bottom };
+}
+
+// Split a string into grapheme-like clusters.
+// Uses Intl.Segmenter when available; otherwise falls back to a simple heuristic that
+// attaches combining marks and Thai pre-base vowels to the following base.
+function splitGraphemes(str) {
+    if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+        const seg = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+        return Array.from(seg.segment(str), s => s.segment);
+    }
+
+    const leftVowels = new Set(['\u0E40','\u0E41','\u0E42','\u0E43','\u0E44']);
+    const combiningMark = /\p{M}/u;
+    const chars = [...str];
+    const clusters = [];
+    let i = 0;
+    while (i < chars.length) {
+        const ch = chars[i];
+
+        // Pre-base vowel: attach to next char if present
+        if (leftVowels.has(ch) && i + 1 < chars.length) {
+            let cluster = ch + chars[i + 1];
+            i += 2;
+            // append following combining marks
+            while (i < chars.length && combiningMark.test(chars[i])) {
+                cluster += chars[i];
+                i++;
+            }
+            clusters.push(cluster);
+            continue;
+        }
+
+        // Normal base character
+        let cluster = ch;
+        i++;
+        while (i < chars.length && combiningMark.test(chars[i])) {
+            cluster += chars[i];
+            i++;
+        }
+        clusters.push(cluster);
+    }
+
+    return clusters;
 }
 
 // Update the word display with guessed letters
 function updateWordDisplay() {
     wordDisplay.innerHTML = '';
-    word.split('').forEach(char => {
+    // iterate grapheme clusters instead of simple code units
+    const clusters = (wordClusters.length ? wordClusters : splitGraphemes(word));
+
+    clusters.forEach(cluster => {
         const letterContainer = document.createElement('div');
         letterContainer.classList.add('letter-container');
 
+        const leftSpan = document.createElement('span');
+        leftSpan.classList.add('vowel-left');
         const topSpan = document.createElement('span');
         topSpan.classList.add('vowel-top');
         const consonantSpan = document.createElement('span');
@@ -126,8 +198,9 @@ function updateWordDisplay() {
         const bottomSpan = document.createElement('span');
         bottomSpan.classList.add('vowel-bottom');
 
-        if (guessedLetters.includes(char)) {
-            const { top, consonant, bottom } = decomposeThai(char);
+        if (isClusterRevealed(cluster)) {
+            const { left, top, consonant, bottom } = decomposeThai(cluster);
+            leftSpan.textContent = left;
             topSpan.textContent = top;
             consonantSpan.textContent = consonant;
             bottomSpan.textContent = bottom;
@@ -135,11 +208,28 @@ function updateWordDisplay() {
             consonantSpan.innerHTML = '&nbsp;';
         }
 
+        letterContainer.appendChild(leftSpan);
         letterContainer.appendChild(topSpan);
         letterContainer.appendChild(consonantSpan);
         letterContainer.appendChild(bottomSpan);
         wordDisplay.appendChild(letterContainer);
     });
+}
+
+// Return true when a cluster should be shown based on guessed letters
+function isClusterRevealed(cluster) {
+    if (guessedLetters.includes(cluster)) return true;
+
+    // reveal if any guessed single-char (or cluster) exists inside the cluster
+    for (const g of guessedLetters) {
+        if (cluster.includes(g)) return true;
+
+        // also check base consonant equality
+        const parts = decomposeThai(cluster);
+        if (parts.consonant && parts.consonant.includes(g)) return true;
+    }
+
+    return false;
 }
 
 // Update the used letters display
@@ -223,8 +313,9 @@ function handleGuess(key) {
 
     guessedLetters.push(normalizedKey);
 
-    if (word.includes(normalizedKey)) {
-        if (word.split('').every(l => guessedLetters.includes(l))) {
+    // check against clusters
+    if (wordClusters.includes(normalizedKey)) {
+        if (wordClusters.every(l => guessedLetters.includes(l))) {
             gameState = 'won';
             message.textContent = 'ยินดีด้วย! คุณชนะ! 🎉';
         }
