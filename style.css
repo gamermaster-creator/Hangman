@@ -217,6 +217,22 @@ h1 {
     bottom: -26px;
 }
 
+/* stacked placeholder levels */
+.placeholder-top .placeholder-top-level,
+.placeholder-bottom .placeholder-bottom-level {
+    display: block;
+    height: 12px; /* spacing between stacked underscores */
+    line-height: 12px;
+    text-align: center;
+}
+
+/* tune vowel font to better blend with Sarabun */
+.vowel-left, .vowel-right, .vowel-top, .vowel-bottom {
+    font-family: 'Sarabun', sans-serif;
+    font-weight: 400;
+    opacity: 0.95;
+}
+
 /* center right-side vowel over the underscore by nudging left */
 .vowel-right {
     left: 60%;
