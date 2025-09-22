@@ -170,7 +170,7 @@ h1 {
 
 .letter-container {
     position: relative;
-    width: 40px;
+    width: 48px;
     height: 70px;
     border-bottom: 3px solid var(--secondary-color);
 }
@@ -186,6 +186,15 @@ h1 {
     right: 110%; /* position to the left of the base consonant */
     transform: translateX(0);
     top: 28px; /* align vertically near the consonant middle */
+    font-size: 20px;
+    z-index: 3;
+}
+
+.vowel-right {
+    position: absolute;
+    left: 100%;
+    transform: translateX(-10%);
+    top: 28px;
     font-size: 20px;
     z-index: 3;
 }
