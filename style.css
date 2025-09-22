@@ -231,19 +231,27 @@ h1 {
 
 /* stacked placeholder levels */
 .placeholder-top .placeholder-top-level,
-.placeholder-bottom .placeholder-bottom-level {
-    display: block;
-    height: 12px; /* spacing between stacked underscores */
-    line-height: 12px;
-    text-align: center;
-}
-
+.placeholder-bottom .placeholder-bottom-level,
 .placeholder-left .placeholder-left-level,
 .placeholder-right .placeholder-right-level {
     display: block;
-    height: 16px;
-    line-height: 16px;
-    text-align: center;
+    width: 18px;
+    height: 6px; /* small height so it doesn't visually duplicate the base underline */
+    margin: 2px auto; /* center horizontally */
+    box-sizing: border-box;
+}
+
+/* draw a subtle short line for each placeholder level instead of '_' character */
+.placeholder-top .placeholder-top-level::before,
+.placeholder-bottom .placeholder-bottom-level::before,
+.placeholder-left .placeholder-left-level::before,
+.placeholder-right .placeholder-right-level::before {
+    content: '';
+    display: block;
+    height: 2px;
+    background: var(--disabled-color);
+    border-radius: 1px;
+    width: 100%;
 }
 
 /* tune vowel font to better blend with Sarabun */
