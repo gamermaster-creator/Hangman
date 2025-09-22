@@ -142,7 +142,14 @@ function decomposeThai(cluster) {
     // combine tone into top for rendering convenience
     if (tone) top = tone + top;
 
-    return { left, top, right, consonant, bottom };
+    // return arrays for multi-mark handling
+    return {
+        left: left ? [...left] : [],
+        top: top ? [...top] : [],
+        right: right ? [...right] : [],
+        consonant,
+        bottom: bottom ? [...bottom] : []
+    };
 }
 
 // Split a string into grapheme-like clusters.
@@ -215,45 +222,63 @@ function updateWordDisplay() {
 
         const parts = decomposeThai(cluster);
 
-        // Show each part only when that specific character(s) has been guessed
-    leftSpan.textContent = parts.left && guessedLetters.some(g => parts.left.includes(g)) ? parts.left : '';
-        const topRevealed = parts.top && guessedLetters.some(g => parts.top.includes(g));
-        topSpan.textContent = topRevealed ? parts.top : '';
-        // if top has multiple combining marks, create stacked underscores
-        if (parts.top && !topRevealed) {
-            topPlaceholder.innerHTML = '';
-            [...parts.top].forEach(() => {
+        // LEFT (pre-base) - parts.left is array
+        leftSpan.textContent = parts.left.length && guessedLetters.some(g => parts.left.includes(g)) ? parts.left.join('') : '';
+
+        // TOP - produce spans for each top mark and placeholder per level
+        topSpan.innerHTML = '';
+        topPlaceholder.innerHTML = '';
+        parts.top.forEach((mark, idx) => {
+            const revealed = guessedLetters.includes(mark) || guessedLetters.includes(cluster) || (parts.consonant && guessedLetters.includes(parts.consonant));
+            if (revealed) {
+                const el = document.createElement('div');
+                el.className = 'top-mark';
+                el.textContent = mark;
+                topSpan.appendChild(el);
+            } else {
                 const s = document.createElement('div');
                 s.textContent = '_';
                 s.className = 'placeholder-top-level';
                 topPlaceholder.appendChild(s);
-            });
-        } else {
-            topPlaceholder.textContent = '';
-        }
+            }
+        });
 
-    const consonantRevealed = parts.consonant && guessedLetters.some(g => parts.consonant.includes(g));
-    consonantSpan.textContent = consonantRevealed ? parts.consonant : '';
+        // consonant
+        const consonantRevealed = parts.consonant && guessedLetters.some(g => parts.consonant.includes(g));
+        consonantSpan.textContent = consonantRevealed ? parts.consonant : '';
 
-    const rightRevealed = parts.right && guessedLetters.some(g => parts.right.includes(g));
-    rightSpan.textContent = rightRevealed ? parts.right : '';
+        // RIGHT - array
+        rightSpan.innerHTML = '';
+        parts.right.forEach(mark => {
+            const revealed = guessedLetters.includes(mark) || guessedLetters.includes(cluster) || (parts.consonant && guessedLetters.includes(parts.consonant));
+            if (revealed) {
+                const el = document.createElement('div');
+                el.className = 'right-mark';
+                el.textContent = mark;
+                rightSpan.appendChild(el);
+            }
+        });
 
-        const bottomRevealed = parts.bottom && guessedLetters.some(g => parts.bottom.includes(g));
-        bottomSpan.textContent = bottomRevealed ? parts.bottom : '';
-        if (parts.bottom && !bottomRevealed) {
-            bottomPlaceholder.innerHTML = '';
-            [...parts.bottom].forEach(() => {
+        // BOTTOM - per-level
+        bottomSpan.innerHTML = '';
+        bottomPlaceholder.innerHTML = '';
+        parts.bottom.forEach(mark => {
+            const revealed = guessedLetters.includes(mark) || guessedLetters.includes(cluster) || (parts.consonant && guessedLetters.includes(parts.consonant));
+            if (revealed) {
+                const el = document.createElement('div');
+                el.className = 'bottom-mark';
+                el.textContent = mark;
+                bottomSpan.appendChild(el);
+            } else {
                 const s = document.createElement('div');
                 s.textContent = '_';
                 s.className = 'placeholder-bottom-level';
                 bottomPlaceholder.appendChild(s);
-            });
-        } else {
-            bottomPlaceholder.textContent = '';
-        }
+            }
+        });
 
-        // if nothing of the base consonant revealed, show placeholder
-        if (!consonantSpan.textContent) consonantSpan.innerHTML = '&nbsp;';
+    // if nothing of the base consonant revealed, show placeholder
+    if (!consonantSpan.textContent) consonantSpan.innerHTML = '&nbsp;';
 
         letterContainer.appendChild(leftSpan);
         // top placeholder should be behind or near top span
@@ -269,17 +294,20 @@ function updateWordDisplay() {
 
 // Return true when a cluster should be shown based on guessed letters
 function isClusterRevealed(cluster) {
-    // A cluster is revealed only if all its non-empty parts have been guessed
+    // A cluster is revealed only if the base consonant is guessed and every individual mark is guessed
     const parts = decomposeThai(cluster);
-    const needed = [];
-    if (parts.left) needed.push(parts.left);
-    if (parts.top) needed.push(parts.top);
-    if (parts.right) needed.push(parts.right);
-    if (parts.consonant) needed.push(parts.consonant);
-    if (parts.bottom) needed.push(parts.bottom);
+    const consonantOk = parts.consonant ? guessedLetters.some(g => parts.consonant.includes(g)) : true;
+    if (!consonantOk) return false;
 
-    // For each needed part, check if any guessed entry matches it or is contained in it
-    return needed.every(part => guessedLetters.some(g => part.includes(g)));
+    // for each array of marks, ensure every mark is guessed
+    const arrays = [parts.left, parts.top, parts.right, parts.bottom];
+    for (const arr of arrays) {
+        for (const mark of arr) {
+            if (!guessedLetters.some(g => g === mark)) return false;
+        }
+    }
+
+    return true;
 }
 
 // Update the used letters display
@@ -363,11 +391,19 @@ function handleGuess(key) {
 
     guessedLetters.push(normalizedKey);
 
-    // A guess is correct if it matches any part of any grapheme cluster
-    const correct = wordClusters.some(cluster => cluster.includes(normalizedKey));
+    // A guess is correct if it matches any part of any grapheme cluster (consonant or any individual mark)
+    const correct = wordClusters.some(cluster => {
+        const p = decomposeThai(cluster);
+        if (p.consonant && p.consonant === normalizedKey) return true;
+        if (p.left.some(m => m === normalizedKey)) return true;
+        if (p.top.some(m => m === normalizedKey)) return true;
+        if (p.right.some(m => m === normalizedKey)) return true;
+        if (p.bottom.some(m => m === normalizedKey)) return true;
+        return false;
+    });
 
     if (correct) {
-        // If every cluster is revealed (by any guessed letters), player wins
+        // If every cluster is revealed (consonant + all individual marks), player wins
         if (wordClusters.every(cluster => isClusterRevealed(cluster))) {
             gameState = 'won';
             message.textContent = 'ยินดีด้วย! คุณชนะ! 🎉';
