@@ -209,6 +209,18 @@ h1 {
     z-index: 2;
 }
 
+.placeholder-left, .placeholder-right {
+    position: absolute;
+    top: 28px;
+    color: var(--disabled-color);
+    font-size: 18px;
+    line-height: 1;
+    z-index: 2;
+}
+
+.placeholder-left { right: 55%; transform: translateX(45%); }
+.placeholder-right { left: 60%; transform: translateX(-50%); }
+
 .placeholder-top {
     top: -6px;
 }
@@ -223,6 +235,14 @@ h1 {
     display: block;
     height: 12px; /* spacing between stacked underscores */
     line-height: 12px;
+    text-align: center;
+}
+
+.placeholder-left .placeholder-left-level,
+.placeholder-right .placeholder-right-level {
+    display: block;
+    height: 16px;
+    line-height: 16px;
     text-align: center;
 }
 
