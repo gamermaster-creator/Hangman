@@ -248,7 +248,7 @@ function updateWordDisplay() {
         parts.left.forEach(mark => {
             if (!guessedLetters.includes(mark) && !guessedLetters.includes(cluster) && !(parts.consonant && guessedLetters.includes(parts.consonant))) {
                 const s = document.createElement('div');
-                s.textContent = '_';
+                // use an empty element; CSS will draw the visual placeholder line to avoid '_' duplication
                 s.className = 'placeholder-left-level';
                 leftPlaceholder.appendChild(s);
             }
@@ -266,7 +266,7 @@ function updateWordDisplay() {
                 topSpan.appendChild(el);
             } else {
                 const s = document.createElement('div');
-                s.textContent = '_';
+                // empty; style via CSS
                 s.className = 'placeholder-top-level';
                 topPlaceholder.appendChild(s);
             }
@@ -291,7 +291,6 @@ function updateWordDisplay() {
             }
             else {
                 const s = document.createElement('div');
-                s.textContent = '_';
                 s.className = 'placeholder-right-level';
                 rightPlaceholder.appendChild(s);
             }
@@ -309,7 +308,6 @@ function updateWordDisplay() {
                 bottomSpan.appendChild(el);
             } else {
                 const s = document.createElement('div');
-                s.textContent = '_';
                 s.className = 'placeholder-bottom-level';
                 bottomPlaceholder.appendChild(s);
             }
