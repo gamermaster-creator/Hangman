@@ -224,6 +224,17 @@ function updateWordDisplay() {
 
         // LEFT (pre-base) - parts.left is array
         leftSpan.textContent = parts.left.length && guessedLetters.some(g => parts.left.includes(g)) ? parts.left.join('') : '';
+        const leftPlaceholder = document.createElement('span');
+        leftPlaceholder.classList.add('placeholder-left');
+        leftPlaceholder.innerHTML = '';
+        parts.left.forEach(mark => {
+            if (!guessedLetters.includes(mark) && !guessedLetters.includes(cluster) && !(parts.consonant && guessedLetters.includes(parts.consonant))) {
+                const s = document.createElement('div');
+                s.textContent = '_';
+                s.className = 'placeholder-left-level';
+                leftPlaceholder.appendChild(s);
+            }
+        });
 
         // TOP - produce spans for each top mark and placeholder per level
         topSpan.innerHTML = '';
@@ -249,6 +260,9 @@ function updateWordDisplay() {
 
         // RIGHT - array
         rightSpan.innerHTML = '';
+        const rightPlaceholder = document.createElement('span');
+        rightPlaceholder.classList.add('placeholder-right');
+        rightPlaceholder.innerHTML = '';
         parts.right.forEach(mark => {
             const revealed = guessedLetters.includes(mark) || guessedLetters.includes(cluster) || (parts.consonant && guessedLetters.includes(parts.consonant));
             if (revealed) {
@@ -256,6 +270,12 @@ function updateWordDisplay() {
                 el.className = 'right-mark';
                 el.textContent = mark;
                 rightSpan.appendChild(el);
+            }
+            else {
+                const s = document.createElement('div');
+                s.textContent = '_';
+                s.className = 'placeholder-right-level';
+                rightPlaceholder.appendChild(s);
             }
         });
 
@@ -280,11 +300,13 @@ function updateWordDisplay() {
     // if nothing of the base consonant revealed, show placeholder
     if (!consonantSpan.textContent) consonantSpan.innerHTML = '&nbsp;';
 
-        letterContainer.appendChild(leftSpan);
+    letterContainer.appendChild(leftSpan);
+    letterContainer.appendChild(leftPlaceholder);
         // top placeholder should be behind or near top span
         letterContainer.appendChild(topPlaceholder);
         letterContainer.appendChild(topSpan);
-        letterContainer.appendChild(rightSpan);
+    letterContainer.appendChild(rightSpan);
+    letterContainer.appendChild(rightPlaceholder);
         letterContainer.appendChild(consonantSpan);
         letterContainer.appendChild(bottomPlaceholder);
         letterContainer.appendChild(bottomSpan);
