@@ -107,7 +107,8 @@ function decomposeThai(cluster) {
         '\u0E37', // ื
         '\u0E47', // ็
         '\u0E4D', // ํ
-        '\u0E4C'  // ์ (thanthakhat)
+        '\u0E4C', // ์ (thanthakhat)
+        '\u0E33'  // ำ (SARA AM) - treat visually as top/above for better positioning
     ];
     const toneMarks = ['\u0E48','\u0E49','\u0E4A','\u0E4B']; // ่ ้ ๊ ๋
     const bottomMarks = ['\u0E38','\u0E39','\u0E3A','\u0E4E']; // ุ ู ฺ ๎
