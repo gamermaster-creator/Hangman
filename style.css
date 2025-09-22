@@ -165,13 +165,13 @@ h1 {
 #word-display {
     display: flex;
     gap: 10px;
-    margin-bottom: 1rem;
+    margin-bottom: 1.6rem; /* give more room above used letters */
 }
 
 .letter-container {
     position: relative;
     width: 48px;
-    height: 70px;
+    height: 84px; /* taller to provide vertical space for bottom vowels */
     border-bottom: 3px solid var(--secondary-color);
 }
 
@@ -310,15 +310,15 @@ h1 {
 #used-letters-container {
     font-size: 1.1rem;
     text-align: center;
-    margin-top: 1rem;
+    margin-top: 1.8rem; /* push this lower to avoid confusion with bottom vowels */
     color: #555;
 }
 
 #used-letters {
     font-weight: bold;
     color: #333;
-    margin-top: 20px;
-    padding: 10px;
+    margin-top: 22px;
+    padding: 12px 14px; /* slightly larger padding for legibility */
     border-radius: 8px;
     background: #f0f0f0;
     text-align: center;
