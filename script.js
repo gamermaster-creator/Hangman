@@ -59,8 +59,8 @@ function showScreen(screen) {
 function startGame() {
     const selectedCategory = categoryDropdown.value;
     const words = wordsData[selectedCategory].words;
-    // pick a word and prepare grapheme clusters so accents/diacritics stay attached
-    word = words[Math.floor(Math.random() * words.length)].toUpperCase();
+    // pick a word, normalize it and prepare grapheme clusters so accents/diacritics stay attached
+    word = words[Math.floor(Math.random() * words.length)].normalize('NFC').toUpperCase();
     wordClusters = splitGraphemes(word);
     guessedLetters = [];
     wrongGuesses = 0;
@@ -313,9 +313,12 @@ function handleGuess(key) {
 
     guessedLetters.push(normalizedKey);
 
-    // check against clusters
-    if (wordClusters.includes(normalizedKey)) {
-        if (wordClusters.every(l => guessedLetters.includes(l))) {
+    // A guess is correct if it matches any part of any grapheme cluster
+    const correct = wordClusters.some(cluster => cluster.includes(normalizedKey));
+
+    if (correct) {
+        // If every cluster is revealed (by any guessed letters), player wins
+        if (wordClusters.every(cluster => isClusterRevealed(cluster))) {
             gameState = 'won';
             message.textContent = 'ยินดีด้วย! คุณชนะ! 🎉';
         }
