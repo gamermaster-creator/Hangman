@@ -200,31 +200,47 @@ function updateWordDisplay() {
 
         const leftSpan = document.createElement('span');
         leftSpan.classList.add('vowel-left');
-        const topSpan = document.createElement('span');
-        topSpan.classList.add('vowel-top');
+    const topSpan = document.createElement('span');
+    topSpan.classList.add('vowel-top');
+    const topPlaceholder = document.createElement('span');
+    topPlaceholder.classList.add('placeholder-top');
         const rightSpan = document.createElement('span');
         rightSpan.classList.add('vowel-right');
         const consonantSpan = document.createElement('span');
         consonantSpan.classList.add('consonant');
-        const bottomSpan = document.createElement('span');
-        bottomSpan.classList.add('vowel-bottom');
+    const bottomSpan = document.createElement('span');
+    bottomSpan.classList.add('vowel-bottom');
+    const bottomPlaceholder = document.createElement('span');
+    bottomPlaceholder.classList.add('placeholder-bottom');
 
         const parts = decomposeThai(cluster);
 
         // Show each part only when that specific character(s) has been guessed
-        leftSpan.textContent = parts.left && guessedLetters.some(g => parts.left.includes(g)) ? parts.left : '';
-        topSpan.textContent = parts.top && guessedLetters.some(g => parts.top.includes(g)) ? parts.top : '';
-        consonantSpan.textContent = parts.consonant && guessedLetters.some(g => parts.consonant.includes(g)) ? parts.consonant : '';
-        rightSpan.textContent = parts.right && guessedLetters.some(g => parts.right.includes(g)) ? parts.right : '';
-        bottomSpan.textContent = parts.bottom && guessedLetters.some(g => parts.bottom.includes(g)) ? parts.bottom : '';
+    leftSpan.textContent = parts.left && guessedLetters.some(g => parts.left.includes(g)) ? parts.left : '';
+    const topRevealed = parts.top && guessedLetters.some(g => parts.top.includes(g));
+    topSpan.textContent = topRevealed ? parts.top : '';
+    topPlaceholder.textContent = (parts.top && !topRevealed) ? '_' : '';
+
+    const consonantRevealed = parts.consonant && guessedLetters.some(g => parts.consonant.includes(g));
+    consonantSpan.textContent = consonantRevealed ? parts.consonant : '';
+
+    const rightRevealed = parts.right && guessedLetters.some(g => parts.right.includes(g));
+    rightSpan.textContent = rightRevealed ? parts.right : '';
+
+    const bottomRevealed = parts.bottom && guessedLetters.some(g => parts.bottom.includes(g));
+    bottomSpan.textContent = bottomRevealed ? parts.bottom : '';
+    bottomPlaceholder.textContent = (parts.bottom && !bottomRevealed) ? '_' : '';
 
         // if nothing of the base consonant revealed, show placeholder
         if (!consonantSpan.textContent) consonantSpan.innerHTML = '&nbsp;';
 
         letterContainer.appendChild(leftSpan);
+        // top placeholder should be behind or near top span
+        letterContainer.appendChild(topPlaceholder);
         letterContainer.appendChild(topSpan);
         letterContainer.appendChild(rightSpan);
         letterContainer.appendChild(consonantSpan);
+        letterContainer.appendChild(bottomPlaceholder);
         letterContainer.appendChild(bottomSpan);
         wordDisplay.appendChild(letterContainer);
     });
