@@ -85,7 +85,7 @@ body {
 }
 
 h1 {
-    color: bottom: 2rem;
+    margin-bottom: 2rem;
     text-align: center;
 }
 
@@ -181,19 +181,27 @@ h1 {
     transform: translateX(-50%);
 }
 
+.vowel-left {
+    position: absolute;
+    right: 100%; /* position to the left of the base consonant */
+    transform: translateX(-10%);
+    top: 28px; /* align vertically near the consonant middle */
+    font-size: 20px;
+}
+
 .consonant {
     font-size: 30px;
-    bottom: 5px;
+    bottom: 8px;
 }
 
 .vowel-top {
     font-size: 20px;
-    top: 0;
+    top: -6px;
 }
 
 .vowel-bottom {
     font-size: 20px;
-    bottom: -25px;
+    bottom: -26px;
 }
 
 #message {
