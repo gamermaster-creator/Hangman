@@ -28,6 +28,31 @@ async function loadWords() {
     }
 }
 
+// Small self-test helper: when URL has ?selftest=1, log counts for specific examples.
+function runSampleChecks() {
+    const samples = [
+        { label: 'เป็ด', word: '\u0E40\u0E1B\u0E47\u0E14\u0E0D' }, // this literal may vary; use normalized form below
+        { label: 'บ้าน', word: '\u0E1A\u0E32\u0E19' },
+    ];
+    // better: use actual Thai strings
+    const rawSamples = ['เป็ด', 'บ้าน', 'น้องดาต้า'];
+    rawSamples.forEach(s => {
+        const w = s.normalize('NFC');
+        const clusters = splitGraphemes(w);
+        const breakdown = countPlaceholders(clusters);
+        console.log(`SAMPLE "${s}": total=${breakdown.total}`, breakdown.perCluster.map(p => ({ cluster: p.cluster, count: p.count })));
+    });
+}
+
+// Run self-test if requested via URL param
+try {
+    if (typeof window !== 'undefined' && window.location && new URLSearchParams(window.location.search).get('selftest') === '1') {
+        window.addEventListener('load', runSampleChecks);
+    }
+} catch (e) {
+    // ignore in non-browser env
+}
+
 // Setup category selection dropdown
 function setupCategories() {
     categoryDropdown.innerHTML = '';
@@ -81,17 +106,38 @@ function startGame() {
         console.log('DEBUG clusters:', wordClusters);
         console.log('DEBUG decomposed:', wordClusters.map(c => decomposeThai(c)));
         // count expected placeholders (consonant + marks)
-        const expected = wordClusters.reduce((sum, c) => {
-            const p = decomposeThai(c);
-            let cnt = 0;
-            if (p.consonant) cnt++;
-            cnt += p.left.length + p.top.length + p.right.length + p.bottom.length;
-            return sum + cnt;
-        }, 0);
-        console.log('DEBUG expected total placeholders:', expected);
+        const breakdown = countPlaceholders(wordClusters);
+        console.log('DEBUG placeholders breakdown:', breakdown);
+        console.log('DEBUG expected total placeholders:', breakdown.total);
+        // show total in message area
+        message.textContent = `ขีดทั้งหมด: ${breakdown.total}`;
     } catch (e) {
         console.warn('DEBUG log failed', e);
     }
+}
+
+// Count placeholders per grapheme cluster and total according to rules:
+// - consonant: 1 (if present)
+// - pre-base (left) vowels: each counts 1
+// - top marks (including tone and mark above): each counts 1
+// - post-base/right vowels: each counts 1
+// - bottom marks: each counts 1
+// - karan (U+0E4C) counts 1
+function countPlaceholders(clusters) {
+    let total = 0;
+    const perCluster = clusters.map(cluster => {
+        const parts = decomposeThai(cluster);
+        let cnt = 0;
+        if (parts.consonant && parts.consonant.trim() !== '') cnt++;
+        cnt += parts.left.length;
+        // top includes tone/tone marks already combined
+        cnt += parts.top.length;
+        cnt += parts.right.length;
+        cnt += parts.bottom.length;
+        total += cnt;
+        return { cluster, parts, count: cnt };
+    });
+    return { total, perCluster };
 }
 
 // Decompose Thai characters into consonant and vowels
