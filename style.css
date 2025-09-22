@@ -183,8 +183,8 @@ h1 {
 
 .vowel-left {
     position: absolute;
-    right: 110%; /* position to the left of the base consonant */
-    transform: translateX(0);
+    right: 55%; /* nudge toward center */
+    transform: translateX(45%);
     top: 28px; /* align vertically near the consonant middle */
     font-size: 20px;
     z-index: 3;
@@ -192,8 +192,8 @@ h1 {
 
 .vowel-right {
     position: absolute;
-    left: 100%;
-    transform: translateX(-10%);
+    left: 60%;
+    transform: translateX(-50%);
     top: 28px;
     font-size: 20px;
     z-index: 3;
@@ -231,6 +231,21 @@ h1 {
     font-family: 'Sarabun', sans-serif;
     font-weight: 400;
     opacity: 0.95;
+}
+
+/* small tweaks for long vowels like า and short vowel ะ to match weight */
+.vowel-right {
+    letter-spacing: -0.6px;
+    font-weight: 450;
+}
+.vowel-bottom {
+    letter-spacing: -0.2px;
+}
+
+/* slight adjustment for short-vowel ะ */
+.vowel-right[data-vowel='ะ'] {
+    font-weight: 420;
+    letter-spacing: -0.3px;
 }
 
 /* center right-side vowel over the underscore by nudging left */
