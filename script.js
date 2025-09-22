@@ -97,6 +97,7 @@ function decomposeThai(cluster) {
     let left = '';
     let top = '';
     let tone = '';
+    let right = '';
     let consonant = '';
     let bottom = '';
 
@@ -121,6 +122,14 @@ function decomposeThai(cluster) {
             continue;
         }
 
+        // treat common post-base vowels as right-side vowels
+        // common right-side vowels: U+0E30..U+0E39 (many are dependent vowels)
+        const rightRange = ['\u0E30','\u0E32','\u0E33','\u0E34','\u0E35','\u0E36','\u0E37','\u0E38','\u0E39'];
+        if (rightRange.includes(ch)) {
+            right += ch;
+            continue;
+        }
+
         if (bottomMarks.includes(ch)) {
             bottom += ch;
             continue;
@@ -133,7 +142,7 @@ function decomposeThai(cluster) {
     // combine tone into top for rendering convenience
     if (tone) top = tone + top;
 
-    return { left, top, consonant, bottom };
+    return { left, top, right, consonant, bottom };
 }
 
 // Split a string into grapheme-like clusters.
@@ -193,23 +202,28 @@ function updateWordDisplay() {
         leftSpan.classList.add('vowel-left');
         const topSpan = document.createElement('span');
         topSpan.classList.add('vowel-top');
+        const rightSpan = document.createElement('span');
+        rightSpan.classList.add('vowel-right');
         const consonantSpan = document.createElement('span');
         consonantSpan.classList.add('consonant');
         const bottomSpan = document.createElement('span');
         bottomSpan.classList.add('vowel-bottom');
 
-        if (isClusterRevealed(cluster)) {
-            const { left, top, consonant, bottom } = decomposeThai(cluster);
-            leftSpan.textContent = left;
-            topSpan.textContent = top;
-            consonantSpan.textContent = consonant;
-            bottomSpan.textContent = bottom;
-        } else {
-            consonantSpan.innerHTML = '&nbsp;';
-        }
+        const parts = decomposeThai(cluster);
+
+        // Show each part only when that specific character(s) has been guessed
+        leftSpan.textContent = parts.left && guessedLetters.some(g => parts.left.includes(g)) ? parts.left : '';
+        topSpan.textContent = parts.top && guessedLetters.some(g => parts.top.includes(g)) ? parts.top : '';
+        consonantSpan.textContent = parts.consonant && guessedLetters.some(g => parts.consonant.includes(g)) ? parts.consonant : '';
+        rightSpan.textContent = parts.right && guessedLetters.some(g => parts.right.includes(g)) ? parts.right : '';
+        bottomSpan.textContent = parts.bottom && guessedLetters.some(g => parts.bottom.includes(g)) ? parts.bottom : '';
+
+        // if nothing of the base consonant revealed, show placeholder
+        if (!consonantSpan.textContent) consonantSpan.innerHTML = '&nbsp;';
 
         letterContainer.appendChild(leftSpan);
         letterContainer.appendChild(topSpan);
+        letterContainer.appendChild(rightSpan);
         letterContainer.appendChild(consonantSpan);
         letterContainer.appendChild(bottomSpan);
         wordDisplay.appendChild(letterContainer);
@@ -218,18 +232,17 @@ function updateWordDisplay() {
 
 // Return true when a cluster should be shown based on guessed letters
 function isClusterRevealed(cluster) {
-    if (guessedLetters.includes(cluster)) return true;
+    // A cluster is revealed only if all its non-empty parts have been guessed
+    const parts = decomposeThai(cluster);
+    const needed = [];
+    if (parts.left) needed.push(parts.left);
+    if (parts.top) needed.push(parts.top);
+    if (parts.right) needed.push(parts.right);
+    if (parts.consonant) needed.push(parts.consonant);
+    if (parts.bottom) needed.push(parts.bottom);
 
-    // reveal if any guessed single-char (or cluster) exists inside the cluster
-    for (const g of guessedLetters) {
-        if (cluster.includes(g)) return true;
-
-        // also check base consonant equality
-        const parts = decomposeThai(cluster);
-        if (parts.consonant && parts.consonant.includes(g)) return true;
-    }
-
-    return false;
+    // For each needed part, check if any guessed entry matches it or is contained in it
+    return needed.every(part => guessedLetters.some(g => part.includes(g)));
 }
 
 // Update the used letters display
