@@ -74,6 +74,24 @@ function startGame() {
     drawHangman();
     showScreen('game');
     window.focus();
+
+    // Debug: log clusters and decomposed parts to help diagnose placeholder counts
+    try {
+        console.log('DEBUG word:', word);
+        console.log('DEBUG clusters:', wordClusters);
+        console.log('DEBUG decomposed:', wordClusters.map(c => decomposeThai(c)));
+        // count expected placeholders (consonant + marks)
+        const expected = wordClusters.reduce((sum, c) => {
+            const p = decomposeThai(c);
+            let cnt = 0;
+            if (p.consonant) cnt++;
+            cnt += p.left.length + p.top.length + p.right.length + p.bottom.length;
+            return sum + cnt;
+        }, 0);
+        console.log('DEBUG expected total placeholders:', expected);
+    } catch (e) {
+        console.warn('DEBUG log failed', e);
+    }
 }
 
 // Decompose Thai characters into consonant and vowels
