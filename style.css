@@ -199,6 +199,30 @@ h1 {
     z-index: 3;
 }
 
+.placeholder-top, .placeholder-bottom {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--disabled-color);
+    font-size: 18px;
+    line-height: 1;
+    z-index: 2;
+}
+
+.placeholder-top {
+    top: -6px;
+}
+
+.placeholder-bottom {
+    bottom: -26px;
+}
+
+/* center right-side vowel over the underscore by nudging left */
+.vowel-right {
+    left: 60%;
+    transform: translateX(-50%);
+}
+
 .consonant {
     font-size: 30px;
     bottom: 8px;
