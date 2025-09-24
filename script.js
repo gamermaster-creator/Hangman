@@ -297,7 +297,7 @@ function updateWordDisplay() {
                 const s = document.createElement('div');
                 // use an empty element; CSS will draw the visual placeholder line to avoid '_' duplication
                 s.className = 'placeholder-left-level';
-                leftPlaceholder.appendChild(s);
+                // leftPlaceholder.appendChild(s); // Removed to avoid extra placeholder line for front vowels
             }
         });
 
@@ -339,7 +339,7 @@ function updateWordDisplay() {
             else {
                 const s = document.createElement('div');
                 s.className = 'placeholder-right-level';
-                rightPlaceholder.appendChild(s);
+                // rightPlaceholder.appendChild(s); // Removed to avoid extra placeholder line for back vowels
             }
         });
 
